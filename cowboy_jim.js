@@ -43,18 +43,37 @@ function drawBuilding(x, y) {
 
 function generateEnemies() {
    let chance = Math.random();
-   if (chance > enemyRate) { 
-       return
-    } else {
-        enemies.top.push({x: 325, y: 0})
-    } 
+   if (chance < enemyRate / 4) {
+    enemies.left.push({x: 0, y: 325})
+   } else if (chance < enemyRate / 2) {
+    enemies.top.push({x: 325, y: 0})
+   } else if (chance < enemyRate / 4 * 3) {
+    enemies.right.push({x: 650, y: 325})
+   } else if (chance < enemyRate) {
+    enemies.bottom.push({x: 325, y: 650})
+   }
 }
 
 function drawEnemies() {
+    enemies.left.forEach(enemy => {
+        renderNinja(enemy);
+        enemy.x++
+    })
+
     enemies.top.forEach(enemy => {
         renderNinja(enemy);
-        enemy.y += 1;
-    })    
+        enemy.y++;
+    })
+    
+    enemies.bottom.forEach(enemy => {
+        renderNinja(enemy);
+        enemy.y--;
+    })
+
+    enemies.right.forEach(enemy => {
+        renderNinja(enemy);
+        enemy.x--;
+    })
 }
 
 function renderNinja(ninja) {
