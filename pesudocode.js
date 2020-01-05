@@ -11,7 +11,7 @@ function enemiesGenerator() {
     let chance = Math.random()
 
     if (chance > enemyRate) {
-        return;
+        return; // you could actually just leave this implicit. the last else if could be else if (chance <= enemyRate)
     } else if (chance <= enemyRate) {
         if (chance <= enemyRate / 4) {
             enemies.top.push(/* whatever I want my ninja default start for top to be */);
