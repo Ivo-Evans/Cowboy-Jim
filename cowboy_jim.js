@@ -1,6 +1,7 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 let jimsDirection = 'up';
+let score = 0;
 let rightCylinder = 6;
 let enemies = {
     top: [],
@@ -10,15 +11,15 @@ let enemies = {
 }
 let enemyRate = 0.005;
 
-document.addEventListener('keyup', shoot)
+document.addEventListener('keyup', shoot) // multiple keystrokes: while keydown, given key is true. If at time of keyup the other key is held down, this will be registered as a double-press ?? 
 
 function shoot(event) {
-    // ultimately this should be split into three methods: one control method, and one for firing shots from each gun. The control method would use short circuit evaluation to start from conjuncts, and some dicerolling, to decide which shoot methods to call. The individual methods will be just like you see below - effectively switch statement shifters. 
-   if (event.keyCode == '38') {enemies.top.shift()} 
-   if (event.keyCode == '40') {enemies.bottom.shift()} 
-   if (event.keyCode == '37') {enemies.left.shift()}
-   if (event.keyCode == '39') {enemies.right.shift()}
-event.prevetDefault();
+   if (event.key == 'ArrowUp') {if (enemies.top.shift() != undefined) {score++}} 
+   if (event.key == 'ArrowDown') {if (enemies.bottom.shift() != undefined) {score++}} 
+   if (event.key == 'ArrowLeft') {if (enemies.left.shift() != undefined) {score++}} 
+   if (event.key == 'ArrowRight') {if (enemies.right.shift() != undefined) {score++}} 
+   event.prevetDefault();
+ 
 }
 
 function draw() {
@@ -27,6 +28,7 @@ function draw() {
     drawBuildings();
     generateEnemies();
     drawEnemies();
+    drawScore();
 }
 
 function drawJim(direction) {
@@ -109,4 +111,24 @@ function renderNinja(ninja) {
     ctx.closePath();
 }
 
+function drawScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#FFF";
+    ctx.fillText("Score: " + score, 8, 20);
+}
+
 let interval = setInterval(draw, 1);
+
+
+
+/*
+TODO: score count
+TODO: decide on sizing
+TODO: refine maths so that, e.g, ninjas run towards Jim's center and don't spawn inside buildings
+TODO: implement reload feature
+TODO: sound effects
+TODO: background images
+
+
+
+*/
