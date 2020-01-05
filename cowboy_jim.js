@@ -26,7 +26,7 @@ function shoot(event) { // currently broken because enemies that have run past y
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawJim();
-    drawBuildings();
+    drawBuildings(); // replace with drawEnvironment, inside add drawBackground before building calls, and call drawEnvironment before drawJim;
     generateEnemies();
     drawEnemies();
     drawScore();
