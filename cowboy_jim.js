@@ -10,10 +10,11 @@ let enemies = {
     left: []
 }
 let enemyRate = 0.005;
+let enemySpeed = 1; // floats are acceptable
 
 document.addEventListener('keyup', shoot) // multiple keystrokes: while keydown, given key is true. If at time of keyup the other key is held down, this will be registered as a double-press ?? 
 
-function shoot(event) {
+function shoot(event) { // currently broken because enemies that have run past you can still be shot... but this won't be a problem in the long run because any enemies that get that far will trigger a gameover. 
    if (event.key == 'ArrowUp') {if (enemies.top.shift() != undefined) {score++}} 
    if (event.key == 'ArrowDown') {if (enemies.bottom.shift() != undefined) {score++}} 
    if (event.key == 'ArrowLeft') {if (enemies.left.shift() != undefined) {score++}} 
@@ -24,14 +25,14 @@ function shoot(event) {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawJim(jimsDirection);
+    drawJim();
     drawBuildings();
     generateEnemies();
     drawEnemies();
     drawScore();
 }
 
-function drawJim(direction) {
+function drawJim() {
    ctx.beginPath();
    ctx.rect(300, 300, 50, 50); // start start span span
    ctx.fillStyle = "red";
@@ -73,33 +74,31 @@ function makeNinjaStartPosition() {
     let sideStepfactor = (325 - lateralPosition) / 325;
     return [lateralPosition, sideStepfactor];
 }
-// y, and in fact every 325 here: random place between 200 and 450. Then calculate the total positive or negative distance of y + 200 from 325, divide that by 300 (the x distance of Jim from the edge), and assign result as transform (a prop). Every iteration -= transform to y in drawEnemies().
-
 
 function drawEnemies() {
     enemies.left.forEach(enemy => {
         renderNinja(enemy);
-        enemy.x++
-        enemy.y += enemy.sidestep;
+        enemy.x += enemySpeed;
+        enemy.y += enemy.sidestep * enemySpeed;
         // gameover conditions, gameover state
     })
 
     enemies.top.forEach(enemy => {
         renderNinja(enemy);
-        enemy.y++;
-        enemy.x += enemy.sidestep;
+        enemy.y += enemySpeed;
+        enemy.x += enemy.sidestep * enemySpeed;
     })
     
     enemies.bottom.forEach(enemy => {
         renderNinja(enemy);
-        enemy.y--;
-        enemy.x += enemy.sidestep;
+        enemy.y -= enemySpeed;
+        enemy.x += enemy.sidestep * enemySpeed;
     })
 
     enemies.right.forEach(enemy => {
         renderNinja(enemy);
-        enemy.x--;
-        enemy.y += enemy.sidestep;
+        enemy.x -= enemySpeed;
+        enemy.y += enemy.sidestep * enemySpeed;
     })
 }
 
@@ -117,8 +116,7 @@ function drawScore() {
     ctx.fillText("Score: " + score, 8, 20);
 }
 
-let interval = setInterval(draw, 1);
-
+let interval = setInterval(draw, 10);
 
 
 /*
@@ -128,7 +126,4 @@ TODO: refine maths so that, e.g, ninjas run towards Jim's center and don't spawn
 TODO: implement reload feature
 TODO: sound effects
 TODO: background images
-
-
-
 */
