@@ -1,6 +1,7 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 let jimsDirection = 'up';
+let rightCylinder = 6;
 let enemies = {
     top: [],
     right: [],
@@ -9,6 +10,16 @@ let enemies = {
 }
 let enemyRate = 0.005;
 
+document.addEventListener('keyup', shoot)
+
+function shoot(event) {
+    // ultimately this should be split into three methods: one control method, and one for firing shots from each gun. The control method would use short circuit evaluation to start from conjuncts, and some dicerolling, to decide which shoot methods to call. The individual methods will be just like you see below - effectively switch statement shifters. 
+   if (event.keyCode == '38') {enemies.top.shift()} 
+   if (event.keyCode == '40') {enemies.bottom.shift()} 
+   if (event.keyCode == '37') {enemies.left.shift()}
+   if (event.keyCode == '39') {enemies.right.shift()}
+event.prevetDefault();
+}
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
