@@ -1,34 +1,68 @@
-// document.addEventListener('keydown', logKeys, false);
-// document.addEventListener('keyup', useKeys, false);
+let arrowArray = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
+let wasdArray = ['w', 'a', 's', 'd']
+let acceptedKeys = arrowArray.concat(wasdArray);
+let currentKeys = [] 
 
-// const acceptedKeys =['ArrowUp', 'ArrowDown', 'Arrowleft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D']
-// const kPress = [] // current keys. Shortened because of its use in useKeys()
 
-// function logKeys(e) {
-//     if (acceptedKeys.includes(e.key)) {kPress.push(e.key.toLowerCase())}
-// }
+function killNinjas(direction) {
+    if (direction == 'arrowup' || direction == 'w') {if (enemies.top.shift() != undefined) {score++}} 
+    if (direction == 'arrowleft' || direction == 'a') {if (enemies.left.shift() != undefined) {score++}} 
+    if (direction == 'arrowright' || direction == 'd') {if (enemies.right.shift() != undefined) {score++}}   
+    if (direction == 'arrowdown' || direction == 's') {if (enemies.bottom.shift() != undefined) {score++}} 
+}
 
-// function useKeys(e) {
-//     if (acceptedKeys.includes(e.key)) {kPress.push(e.key.toLowerCase())}
-//     if (kPress.includes('a') && kPress.includes('ArrowRight')) {
-//         // call shoot with disabling parameter, twice, once with direction 'a' and once with 'ArrowRight'
+function fireShots(direction, chance) {
+    let gunSound = new Audio('./Gunshot sound.mp3'); // first few sounds don't play... why?
+    gunSound.play();  
+    if (chance) {
+        if (Math.random() > chance) {
+            killNinjas(direction);
+        }
+    } else {
+        killNinjas(direction);
+    }
+}
 
-//         // Ivo this restricted shooting thing is not only hard to program, but hard to enforce. What is to stop the player pressing ArrowRight and a in quick succession? Maybe nothing, but maybe most won't come to this conclusion and will just play it 'right'
-//     } else if (/* conjunction of two epic, 4way disjunctions  */) {
-//         // call shoot twice, with 0 and 1 index of kPress
-//     } else { // maybe add an if kpress.length > 0
-//         // call shoot once, with 0 index of kPress
-//     }
-//     kPress = [] // question: will this be too fast to allow double-shooting?
-//     // problem scenario: the user is holding down a, thus continually adding keydowns, but tapping right-hand buttons - each one will be registered as a double shot - not so bad.
-// }
+function checkCylinders(gun, direction, chance) {
+    if (gun == 'right') {
+        if (rightCylinder > 0) {
+            fireShots(direction, chance);
+            rightCylinder--;
+        }
+    } else {
+        if (leftCylinder > 0) {
+            fireShots(direction, chance);
+            leftCylinder--;
+        }
+    }
+}
 
-// function shoot(key) {
-//    if (key == 'ArrowUp' || 'w') {if (enemies.top.shift() != undefined) {score++}} 
-//    if (key == 'ArrowLeft' || 'a') {if (enemies.left.shift() != undefined) {score++}} 
-//    if (key == 'ArrowRight' || 'd') {if (enemies.right.shift() != undefined) {score++}}   
-//    if (key == 'ArrowDown' || 's') {if (enemies.bottom.shift() != undefined) {score++}} 
-//    let gunSound = new Audio('./Gunshot sound.wav');
-//    gunSound.play();
-//    event.preventDefault(); // TODO: make this work
-// }
+function useKeys(event) {
+  if (currentKeys.length > 2) {
+        console.log("currentKeys is too long")
+  } else if (currentKeys.includes('a') && (currentKeys.includes('b'))) {
+      checkCylinders('left', 'a', 0.5)
+      checkCylinders('right', 'arrowright', 0.5)
+  } else if (currentKeys.length > 1) {
+      checkCylinders('right', kpress[0]);
+      checkCylinders('left', kpress[1]);
+  } else {
+      arrowArray.includes(currentKeys[0]) ? checkCylinders('right', currentKeys[0]) : checkCylinders('left', currentKeys[0]);
+      // Remember both the first and the second key are passed through logKeys, and it is these filtered results that we now access. 
+  }
+
+  currentKeys = []
+}
+
+function logKeys(e) {
+    let event = e.key.toLowerCase();
+    if (arrowArray.includes(event)) {duplicateControl(event, arrowArray)}
+    else if (wasdArray.includes(event)) {duplicateControl(event, wasdArray)}
+}
+
+function duplicateControl(input, checkAgainst) {
+  for(key of checkAgainst) {
+      if (currentKeys.includes(key)) {return}
+  }
+  currentKeys.push(input);
+}

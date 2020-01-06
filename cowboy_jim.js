@@ -30,8 +30,8 @@ function logKeys(e) {
 
 function useKeys() {
     if (kPress.includes('a') && kPress.includes('arrowright')) {
-        Math.random() > 0.5 ? kill('a') : shotsFired();
-        Math.random() > 0.5 ? kill('ArrowRight') : shotsFired();
+        Math.random() > 0.5 ? kill('a') : shotsFired('left');
+        Math.random() > 0.5 ? kill('ArrowRight') : shotsFired('right');
     } else if ((kPress.includes('w') || kPress.includes('a') || kPress.includes('s') || kPress.includes('d')) && (kPress.includes('arrowup') || kPress.includes('arrowleft') || kPress.includes('arrowdown') || kPress.includes('arrowright'))) {
         kill(kPress[0])
         kill(kPress[1]) // this won't be perfectly reliable if the user presses three buttons...
@@ -41,9 +41,24 @@ function useKeys() {
     kPress = []; // maybe it would be more 'programmerly' to do the above with pop and just trust that kPress will not become overloaded...
 }
 
-function shotsFired() {
-    let gunSound = new Audio('./Gunshot sound.wav'); // first few sounds don't play... why?
-    gunSound.play();    
+function shotsFired(gun) {
+    let gunSound = new Audio('./Gunshot sound.mp3'); // first few sounds don't play... why?
+    gunSound.play();  
+    if (gun == 'right') {
+        rightCylinder--;
+        if (rightCylinder < 1) {
+            setTimeout(() => {
+                rightCylinder = 6;
+            }, 2000);
+        }
+    } else if (gun == 'left') {
+        leftCylinder--;
+        if (leftCylinder < 1) {
+            setTimeout(() => {
+                leftCylinder = 6;
+            }, 2000);
+        }
+    } 
     // also add an ammo decreaser which is conditional on the flag given as a parameter - left or right
 }
 
@@ -52,8 +67,9 @@ function kill(direction) {
     if (direction == 'arrowleft' || direction == 'a') {if (enemies.left.shift() != undefined) {score++}} 
     if (direction == 'arrowright' || direction == 'd') {if (enemies.right.shift() != undefined) {score++}}   
     if (direction == 'arrowdown' || direction == 's') {if (enemies.bottom.shift() != undefined) {score++}} 
-    shotsFired();
     event.preventDefault(); // TODO: make this work
+    if (['w', 'a', 's', 'd'].includes(direction)) {shotsFired('left')}
+    if (['arrowup', 'arrowleft', 'arrowright', 'arrowdown'].includes(direction)) {shotsFired('right')}
  }
 
 function draw() {
@@ -63,6 +79,7 @@ function draw() {
     generateEnemies();
     drawEnemies();
     drawScore();
+    drawAmmo()
 }
 
 function drawJim() {
@@ -122,16 +139,16 @@ function drawEnemies() {
         enemy.x += enemy.sidestep * enemySpeed;
     })
     
-    enemies.bottom.forEach(enemy => {
-        renderNinja(enemy);
-        enemy.y -= enemySpeed;
-        enemy.x += enemy.sidestep * enemySpeed;
-    })
-
     enemies.right.forEach(enemy => {
         renderNinja(enemy);
         enemy.x -= enemySpeed;
         enemy.y += enemy.sidestep * enemySpeed;
+    })
+
+    enemies.bottom.forEach(enemy => {
+        renderNinja(enemy);
+        enemy.y -= enemySpeed;
+        enemy.x += enemy.sidestep * enemySpeed;
     })
 }
 
@@ -149,10 +166,19 @@ function drawScore() {
     ctx.fillText("Score: " + score, 8, 20);
 }
 
+function drawAmmo() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#FFF";
+    ctx.fillText(leftCylinder, 600, 20);    
+    ctx.fillText(rightCylinder, 600, 40);
+    ctx.fillText(kPress, 460, 60)    
+}
+
 let interval = setInterval(draw, 10);
 
 
 /*
+TODO: add up-down trick shot support
 TODO: decide on sizing
 TODO: refine maths so that, e.g, ninjas run towards Jim's center and don't spawn inside buildings
 TODO: add images to make this more fun
