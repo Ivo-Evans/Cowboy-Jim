@@ -9,24 +9,25 @@ let enemies = {
     bottom: [],
     left: []
 }
-let enemyRate = 0.005;
-let enemySpeed = 1; // floats are acceptable
+let enemyRate = 0.01 
+let enemySpeed = 2; // floats are acceptable
 
-document.addEventListener('keyup', shoot) // multiple keystrokes: while keydown, given key is true. If at time of keyup the other key is held down, this will be registered as a double-press ?? 
+document.addEventListener('keyup', shoot) // keydown and keyup set and then unset relevant key to true. In draw, we will have a userInput method that activates conditions based on the truths of certain conjuncts of statements, 
 
 function shoot(event) { // currently broken because enemies that have run past you can still be shot... but this won't be a problem in the long run because any enemies that get that far will trigger a gameover. 
    if (event.key == 'ArrowUp') {if (enemies.top.shift() != undefined) {score++}} 
    if (event.key == 'ArrowDown') {if (enemies.bottom.shift() != undefined) {score++}} 
    if (event.key == 'ArrowLeft') {if (enemies.left.shift() != undefined) {score++}} 
-   if (event.key == 'ArrowRight') {if (enemies.right.shift() != undefined) {score++}} 
-   event.prevetDefault();
- 
+   if (event.key == 'ArrowRight') {if (enemies.right.shift() != undefined) {score++}}   
+   let gunSound = new Audio('./Gunshot sound.wav');
+   gunSound.play();
+   event.preventDefault();
 }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawJim();
-    drawBuildings(); // replace with drawEnvironment, inside add drawBackground before building calls, and call drawEnvironment before drawJim;
+    drawTown();
     generateEnemies();
     drawEnemies();
     drawScore();
@@ -34,13 +35,13 @@ function draw() {
 
 function drawJim() {
    ctx.beginPath();
-   ctx.rect(300, 300, 50, 50); // start start span span
+   ctx.rect(300, 300, 30, 30); // start start span span
    ctx.fillStyle = "red";
    ctx.fill();
    ctx.closePath(); 
 }
 
-function drawBuildings() {
+function drawTown() {
   drawBuilding(0, 0);
   drawBuilding(canvas.width - 200, 0);
   drawBuilding(0, canvas.height - 200);
@@ -123,7 +124,7 @@ let interval = setInterval(draw, 10);
 TODO: score count
 TODO: decide on sizing
 TODO: refine maths so that, e.g, ninjas run towards Jim's center and don't spawn inside buildings
-TODO: implement reload feature
+TODO: implement gun reload feature
 TODO: sound effects
 TODO: background images
 */
