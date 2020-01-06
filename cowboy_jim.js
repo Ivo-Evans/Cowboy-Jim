@@ -12,7 +12,7 @@ let enemies = {
     bottom: [],
     left: []
 }
-let enemyRate = 0.01 
+let enemyRate = 0.01 // I think a fun game would involve less enemies running faster
 let enemySpeed = 2; // floats are acceptable
 
 const acceptedKeys =['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D']
@@ -38,24 +38,24 @@ function useKeys() {
     } else {
         kill(kPress[0])
     }
-    kPress = [];
+    kPress = []; // maybe it would be more 'programmerly' to do the above with pop and just trust that kPress will not become overloaded...
 }
 
 function shotsFired() {
-    let gunSound = new Audio('./Gunshot sound.wav');
+    let gunSound = new Audio('./Gunshot sound.wav'); // first few sounds don't play... why?
     gunSound.play();    
     // also add an ammo decreaser which is conditional on the flag given as a parameter - left or right
 }
 
-function kill(key) {
-    if (key == 'arrowup' || key == 'w') {if (enemies.top.shift() != undefined) {score++}} 
-    if (key == 'arrowleft' || key == 'a') {if (enemies.left.shift() != undefined) {score++}} 
-    if (key == 'arrowright' || key == 'd') {if (enemies.right.shift() != undefined) {score++}}   
-    if (key == 'arrowdown' || key == 's') {if (enemies.bottom.shift() != undefined) {score++}} 
+function kill(direction) {
+    if (direction == 'arrowup' || direction == 'w') {if (enemies.top.shift() != undefined) {score++}} 
+    if (direction == 'arrowleft' || direction == 'a') {if (enemies.left.shift() != undefined) {score++}} 
+    if (direction == 'arrowright' || direction == 'd') {if (enemies.right.shift() != undefined) {score++}}   
+    if (direction == 'arrowdown' || direction == 's') {if (enemies.bottom.shift() != undefined) {score++}} 
     shotsFired();
     event.preventDefault(); // TODO: make this work
  }
- 
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawJim();
@@ -155,8 +155,11 @@ let interval = setInterval(draw, 10);
 /*
 TODO: decide on sizing
 TODO: refine maths so that, e.g, ninjas run towards Jim's center and don't spawn inside buildings
+TODO: add images to make this more fun
 TODO: implement gun reload feature
 TODO: add reload sound
+TODO: add difficulty incrementing
+TODO: redesign this as a modular program. Modules: main, ninjas, combat or shooting. Each should import all from the others, importing as an object like Ninjas.generateEnemies() inside main.js and Main.ctx inside ninjas.js.
 */
 
 

@@ -1,4 +1,13 @@
-function generateEnemies() {
+export let enemies = {
+    top: [],
+    right: [],
+    bottom: [],
+    left: []
+}
+export let enemyRate = 0.01 // I think a fun game would involve less enemies running faster
+export let enemySpeed = 2; // floats are acceptable
+
+export function generateEnemies() {
     let chance = Math.random();
     let thisNinja = makeNinjaStartPosition();
     if (chance < enemyRate / 4) {
@@ -12,13 +21,13 @@ function generateEnemies() {
     }
  }
  
- function makeNinjaStartPosition() {
+ export function makeNinjaStartPosition() {
      let lateralPosition = 200 + Math.round(Math.random() * 250);
      let sideStepfactor = (325 - lateralPosition) / 325;
      return [lateralPosition, sideStepfactor];
  }
  
- function drawEnemies() {
+ export function drawEnemies() {
      enemies.left.forEach(enemy => {
          renderNinja(enemy);
          enemy.x += enemySpeed;
@@ -45,7 +54,7 @@ function generateEnemies() {
      })
  }
  
- function renderNinja(ninja) {
+ export function renderNinja(ninja) {
      ctx.beginPath()
      ctx.rect(ninja.x, ninja.y, 30, 30)
      ctx.fillStyle = "black";
