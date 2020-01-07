@@ -56,8 +56,8 @@ function drawScore() {
 function drawAmmo() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "#FFF";
-    ctx.fillText(leftCylinder, 600, 20);    
-    ctx.fillText(rightCylinder, 600, 40);
+    ctx.fillText(leftCylinder, 550, 20);    
+    ctx.fillText(rightCylinder, 550, 40);
 }
 
 let interval = setInterval(draw, 10);
@@ -136,7 +136,7 @@ function logKeys(e) {
     if (wasdArray.includes(event)) {duplicateControl(event, wasdArray)}
 }
 
-function duplicateControl(input, checkAgainst) {
+function duplicateControl(input, checkAgainst) { // perhaps you could reduce time complexity by adding a forbiddenKeys array and only pushing if it's not in the forbidden keys array. Then clear forbiddenKeys at the same time as currentKeys
   let key; // you have to actually declare this variable. Weird eh.
   for(key of checkAgainst) {
       if (currentKeys.includes(key)) {return}
@@ -145,12 +145,10 @@ function duplicateControl(input, checkAgainst) {
 }
 
 function useKeys(event) {
-    if (event.key.toLowerCase() == 'r') {
-        leftCylinder = 0;
-        setTimeout(() => leftCylinder = 6, 2000);
+    if (event.key.toLowerCase() == 'e') {
+        reload('left');
     } else if (event.key == '/') {
-        rightCylinder = 0;
-        setTimeout(() => rightCylinder = 6, 2000);
+        reload('right');
     }else if (currentKeys.includes('a') && (currentKeys.includes('arrowright'))) {
         checkCylinders('left', 'a', 0.5)
         checkCylinders('right', 'arrowright', 0.5)
@@ -168,18 +166,28 @@ function useKeys(event) {
     currentKeys = []
 }
 
+function reload(gun) {
+  if (gun == "left") {
+      leftCylinder = "reloading";
+      setTimeout(() => leftCylinder = 6, 2000)
+  } else if (gun == "right") {
+      rightCylinder = "reloading";
+      setTimeout(() => rightCylinder = 6, 2000)
+  } 
+}
+
 function checkCylinders(gun, direction, chance) {
     if (gun == 'right') {
         if (rightCylinder > 0) {
             fireShots(direction, chance);
             rightCylinder--;
-            if (rightCylinder < 1) {setTimeout(() => rightCylinder = 6, 2000)}
+            if (rightCylinder < 1) {reload(gun)}
         }
     } else {
         if (leftCylinder > 0) {
             fireShots(direction, chance);
             leftCylinder--;
-            if (leftCylinder < 1) {setTimeout(() => leftCylinder = 6, 2000)}
+            if (leftCylinder < 1) {reload(gun)}
         }
     }
 }
