@@ -145,15 +145,24 @@ function duplicateControl(input, checkAgainst) {
 }
 
 function useKeys(event) {
-    if (currentKeys.includes('a') && (currentKeys.includes('arrowright'))) {
+    if (event.key.toLowerCase() == 'r') {
+        leftCylinder = 0;
+        setTimeout(() => leftCylinder = 6, 2000);
+    } else if (event.key == '/') {
+        rightCylinder = 0;
+        setTimeout(() => rightCylinder = 6, 2000);
+    }else if (currentKeys.includes('a') && (currentKeys.includes('arrowright'))) {
         checkCylinders('left', 'a', 0.5)
         checkCylinders('right', 'arrowright', 0.5)
     } else if (currentKeys.length > 1) {
         checkCylinders('right', currentKeys[0]);
         checkCylinders('left', currentKeys[1]);
     } else {
-        arrowArray.includes(currentKeys[0]) ? checkCylinders('right', currentKeys[0]) : checkCylinders('left', currentKeys[0]);
-        // Remember both the first and the second key are passed through logKeys, and it is these filtered results that we now access. 
+        if (arrowArray.includes(currentKeys[0])) {
+            checkCylinders('right', currentKeys[0])
+        } else if (wasdArray.includes(currentKeys[0])) {
+            checkCylinders('left', currentKeys[0])
+        }
     }
   
     currentKeys = []
@@ -164,13 +173,13 @@ function checkCylinders(gun, direction, chance) {
         if (rightCylinder > 0) {
             fireShots(direction, chance);
             rightCylinder--;
-            setTimeout(() => {if (rightCylinder < 1) {rightCylinder = 6}}, 3000);
+            if (rightCylinder < 1) {setTimeout(() => rightCylinder = 6, 2000)}
         }
     } else {
         if (leftCylinder > 0) {
             fireShots(direction, chance);
             leftCylinder--;
-            setTimeout(() => {if (leftCylinder < 1) {leftCylinder = 6}}, 3000);
+            if (leftCylinder < 1) {setTimeout(() => leftCylinder = 6, 2000)}
         }
     }
 }
@@ -205,5 +214,3 @@ TODO: add reload sound
 TODO: add difficulty incrementing
 TODO: redesign this as a modular program. Modules: main, ninjas, combat or shooting. Each should import all from the others, importing as an object like Ninjas.generateEnemies() inside main.js and Main.ctx inside ninjas.js.
 */
-
-
