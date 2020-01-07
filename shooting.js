@@ -1,6 +1,7 @@
+// If I wanted to make this a module, is it true that I would only need to import enemies, and only need to export useKeys and logKeys
+
 let arrowArray = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
 let wasdArray = ['w', 'a', 's', 'd']
-let acceptedKeys = arrowArray.concat(wasdArray);
 let currentKeys = [] 
 
 
@@ -28,6 +29,7 @@ function checkCylinders(gun, direction, chance) {
         if (rightCylinder > 0) {
             fireShots(direction, chance);
             rightCylinder--;
+            // here would be the conditional setTimeout for reloading...
         }
     } else {
         if (leftCylinder > 0) {
@@ -39,7 +41,7 @@ function checkCylinders(gun, direction, chance) {
 
 function useKeys(event) {
   if (currentKeys.length > 2) {
-        console.log("currentKeys is too long")
+        console.log("currentKeys is too long");
   } else if (currentKeys.includes('a') && (currentKeys.includes('b'))) {
       checkCylinders('left', 'a', 0.5)
       checkCylinders('right', 'arrowright', 0.5)
@@ -57,7 +59,7 @@ function useKeys(event) {
 function logKeys(e) {
     let event = e.key.toLowerCase();
     if (arrowArray.includes(event)) {duplicateControl(event, arrowArray)}
-    else if (wasdArray.includes(event)) {duplicateControl(event, wasdArray)}
+    if (wasdArray.includes(event)) {duplicateControl(event, wasdArray)}
 }
 
 function duplicateControl(input, checkAgainst) {
