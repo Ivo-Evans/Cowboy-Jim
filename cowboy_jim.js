@@ -175,7 +175,7 @@ function reload(gun) {
       setTimeout(() => rightCylinder = 6, 2000)
   } 
   let reload = new Audio('./reload.mp3');
-  reload.volume = 0.5;
+  reload.volume = 0.4;
   reload.play();
 }
 
