@@ -1,5 +1,12 @@
 // If I wanted to make this a module, is it true that I would only need to import enemies, and only need to export useKeys and logKeys
 
+/*
+export { currentKeys, logKeys, useKeys };
+import { enemies } from './cowboy_jim.js';
+
+let rightCylinder = 6;
+let leftCylinder = 6;
+
 let arrowArray = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
 let wasdArray = ['w', 'a', 's', 'd']
 let currentKeys = [] 
@@ -68,3 +75,5 @@ function duplicateControl(input, checkAgainst) {
   }
   currentKeys.push(input);
 }
+
+*/

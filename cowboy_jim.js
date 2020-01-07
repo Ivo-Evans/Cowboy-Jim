@@ -3,8 +3,6 @@ const ctx = canvas.getContext("2d");
 
 let jimsDirection = 'up';
 let score = 0;
-let rightCylinder = 6;
-let leftCylinder = 6;
 
 let enemies = {
     top: [],
@@ -12,65 +10,9 @@ let enemies = {
     bottom: [],
     left: []
 }
+
 let enemyRate = 0.01 // I think a fun game would involve less enemies running faster
 let enemySpeed = 2; // floats are acceptable
-
-const acceptedKeys =['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D']
-let kPress = [] // current keys. Shortened because of its use in useKeys()
-
-
-document.addEventListener('keydown', logKeys, false);
-document.addEventListener('keyup', useKeys, false);
-
-
-function logKeys(e) {
-    if (kPress.includes(e.key.toLowerCase())) {return}
-    if (acceptedKeys.includes(e.key)) {kPress.push(e.key.toLowerCase())}
-}
-
-function useKeys() {
-    if (kPress.includes('a') && kPress.includes('arrowright')) {
-        Math.random() > 0.5 ? kill('a') : shotsFired('left');
-        Math.random() > 0.5 ? kill('ArrowRight') : shotsFired('right');
-    } else if ((kPress.includes('w') || kPress.includes('a') || kPress.includes('s') || kPress.includes('d')) && (kPress.includes('arrowup') || kPress.includes('arrowleft') || kPress.includes('arrowdown') || kPress.includes('arrowright'))) {
-        kill(kPress[0])
-        kill(kPress[1]) // this won't be perfectly reliable if the user presses three buttons...
-    } else {
-        kill(kPress[0])
-    }
-    kPress = []; // maybe it would be more 'programmerly' to do the above with pop and just trust that kPress will not become overloaded...
-}
-
-function shotsFired(gun) {
-    let gunSound = new Audio('./Gunshot sound.mp3'); // first few sounds don't play... why?
-    gunSound.play();  
-    if (gun == 'right') {
-        rightCylinder--;
-        if (rightCylinder < 1) {
-            setTimeout(() => {
-                rightCylinder = 6;
-            }, 2000);
-        }
-    } else if (gun == 'left') {
-        leftCylinder--;
-        if (leftCylinder < 1) {
-            setTimeout(() => {
-                leftCylinder = 6;
-            }, 2000);
-        }
-    } 
-    // also add an ammo decreaser which is conditional on the flag given as a parameter - left or right
-}
-
-function kill(direction) {
-    if (direction == 'arrowup' || direction == 'w') {if (enemies.top.shift() != undefined) {score++}} 
-    if (direction == 'arrowleft' || direction == 'a') {if (enemies.left.shift() != undefined) {score++}} 
-    if (direction == 'arrowright' || direction == 'd') {if (enemies.right.shift() != undefined) {score++}}   
-    if (direction == 'arrowdown' || direction == 's') {if (enemies.bottom.shift() != undefined) {score++}} 
-    event.preventDefault(); // TODO: make this work
-    if (['w', 'a', 's', 'd'].includes(direction)) {shotsFired('left')}
-    if (['arrowup', 'arrowleft', 'arrowright', 'arrowdown'].includes(direction)) {shotsFired('right')}
- }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -105,6 +47,22 @@ function drawBuilding(x, y) {
     ctx.closePath();
 }
 
+function drawScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#FFF";
+    ctx.fillText("Score: " + score, 8, 20);
+}
+
+function drawAmmo() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#FFF";
+    ctx.fillText(leftCylinder, 600, 20);    
+    ctx.fillText(rightCylinder, 600, 40);
+}
+
+let interval = setInterval(draw, 10);
+
+/* stuff related to enemies */
 function generateEnemies() {
    let chance = Math.random();
    let thisNinja = makeNinjaStartPosition();
@@ -160,22 +118,82 @@ function renderNinja(ninja) {
     ctx.closePath();
 }
 
-function drawScore() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#FFF";
-    ctx.fillText("Score: " + score, 8, 20);
+
+/* shooting mechanics */
+
+let leftCylinder = 6;
+let rightCylinder = 6;
+let arrowArray = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
+let wasdArray = ['w', 'a', 's', 'd']
+let currentKeys = [] 
+
+document.addEventListener('keydown', logKeys, false);
+document.addEventListener('keyup', useKeys, false);
+
+function logKeys(e) {
+    let event = e.key.toLowerCase();
+    if (arrowArray.includes(event)) {duplicateControl(event, arrowArray)}
+    if (wasdArray.includes(event)) {duplicateControl(event, wasdArray)}
 }
 
-function drawAmmo() {
-    ctx.font = "16px Arial";
-    ctx.fillStyle = "#FFF";
-    ctx.fillText(leftCylinder, 600, 20);    
-    ctx.fillText(rightCylinder, 600, 40);
-    ctx.fillText(kPress, 460, 60)    
+function duplicateControl(input, checkAgainst) {
+  let key; // you have to actually declare this variable. Weird eh.
+  for(key of checkAgainst) {
+      if (currentKeys.includes(key)) {return}
+  }
+  currentKeys.push(input);
 }
 
-let interval = setInterval(draw, 10);
+function useKeys(event) {
+    if (currentKeys.includes('a') && (currentKeys.includes('arrowright'))) {
+        checkCylinders('left', 'a', 0.5)
+        checkCylinders('right', 'arrowright', 0.5)
+    } else if (currentKeys.length > 1) {
+        checkCylinders('right', currentKeys[0]);
+        checkCylinders('left', currentKeys[1]);
+    } else {
+        arrowArray.includes(currentKeys[0]) ? checkCylinders('right', currentKeys[0]) : checkCylinders('left', currentKeys[0]);
+        // Remember both the first and the second key are passed through logKeys, and it is these filtered results that we now access. 
+    }
+  
+    currentKeys = []
+}
 
+function checkCylinders(gun, direction, chance) {
+    if (gun == 'right') {
+        if (rightCylinder > 0) {
+            fireShots(direction, chance);
+            rightCylinder--;
+            setTimeout(() => {if (rightCylinder < 1) {rightCylinder = 6}}, 3000);
+        }
+    } else {
+        if (leftCylinder > 0) {
+            fireShots(direction, chance);
+            leftCylinder--;
+            setTimeout(() => {if (leftCylinder < 1) {leftCylinder = 6}}, 3000);
+        }
+    }
+}
+
+function fireShots(direction, chance) {
+    let gunSound = new Audio('./Gunshot sound.mp3'); // first few sounds don't play... why?
+    gunSound.volume = 0.5;
+    gunSound.play();  
+    if (chance) {
+        if (Math.random() > chance) {
+            killNinjas(direction);
+        }
+    } else {
+        killNinjas(direction);
+    }
+}
+
+function killNinjas(direction) {
+    if (direction == 'arrowup' || direction == 'w') {if (enemies.top.shift() != undefined) {score++}} 
+    if (direction == 'arrowleft' || direction == 'a') {if (enemies.left.shift() != undefined) {score++}} 
+    if (direction == 'arrowright' || direction == 'd') {if (enemies.right.shift() != undefined) {score++}}   
+    if (direction == 'arrowdown' || direction == 's') {if (enemies.bottom.shift() != undefined) {score++}} 
+}
 
 /*
 TODO: add up-down trick shot support
