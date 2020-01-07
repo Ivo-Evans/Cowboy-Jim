@@ -174,6 +174,9 @@ function reload(gun) {
       rightCylinder = "reloading";
       setTimeout(() => rightCylinder = 6, 2000)
   } 
+  let reload = new Audio('./reload.mp3');
+  reload.volume = 0.5;
+  reload.play();
 }
 
 function checkCylinders(gun, direction, chance) {
@@ -193,7 +196,7 @@ function checkCylinders(gun, direction, chance) {
 }
 
 function fireShots(direction, chance) {
-    let gunSound = new Audio('./Gunshot sound.mp3'); // first few sounds don't play... why?
+    let gunSound = new Audio('./gunshot.mp3'); // first few sounds don't play... why?
     gunSound.volume = 0.5;
     gunSound.play();  
     if (chance) {
