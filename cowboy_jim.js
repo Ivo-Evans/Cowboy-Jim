@@ -156,9 +156,9 @@ function logKeys(e) {
  }
 
 function useKeys(event) {
-    if (event.key.toLowerCase() == 'e') {
+    if (leftCylinder < 6 && event.key.toLowerCase() == 'e') {
         reload('left');
-    } else if (event.key == '/') {
+    } else if (rightCylinder < 6 && event.key == '/') {
         reload('right');
     } else if (currentKeys.includes('a') && (currentKeys.includes('arrowright'))) {
         checkCylinders('left', 'a', 0.5)
