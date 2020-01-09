@@ -2,7 +2,7 @@ const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
 let jimsDirection = 'up';
-let score = 0;
+let killCount = 0;
 
 let enemies = {
     top: [],
@@ -11,13 +11,14 @@ let enemies = {
     left: []
 }
 
-let enemyRate = 0.01 // I think a fun game would involve less enemies running faster
-let enemySpeed = 2; // floats are acceptable
+let enemyRate = 0.001 // I think a fun game would involve less enemies running faster
+let enemySpeed = 4; // floats are acceptable
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawJim();
     drawTown();
+    // modulateDifficulty();
     generateEnemies();
     drawEnemies();
     drawScore();
@@ -50,7 +51,7 @@ function drawBuilding(x, y) {
 function drawScore() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "#FFF";
-    ctx.fillText("Score: " + score, 8, 20);
+    ctx.fillText("Score: " + killCount, 8, 20);
 }
 
 function drawAmmo() {
@@ -63,6 +64,16 @@ function drawAmmo() {
 let interval = setInterval(draw, 10);
 
 /* stuff related to enemies */
+
+function modulateDifficulty() {
+    if (killCount % 50 == 0) {
+        enemyRate -= 0.002;
+        enemySpeed += 0.5;
+    } else if (killCount % 10 == 0) {
+        enemyRate += 0.001;
+    }
+}
+
 function generateEnemies() {
    let chance = Math.random();
    let thisNinja = makeNinjaStartPosition();
@@ -126,30 +137,30 @@ let rightCylinder = 6;
 let arrowArray = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
 let wasdArray = ['w', 'a', 's', 'd']
 let currentKeys = [] 
+let forbiddenKeys = [];
+
 
 document.addEventListener('keydown', logKeys, false);
 document.addEventListener('keyup', useKeys, false);
 
 function logKeys(e) {
     let event = e.key.toLowerCase();
-    if (arrowArray.includes(event)) {duplicateControl(event, arrowArray)}
-    if (wasdArray.includes(event)) {duplicateControl(event, wasdArray)}
-}
-
-function duplicateControl(input, checkAgainst) { // perhaps you could reduce time complexity by adding a forbiddenKeys array and only pushing if it's not in the forbidden keys array. Then clear forbiddenKeys at the same time as currentKeys
-  let key; // you have to actually declare this variable. Weird eh.
-  for(key of checkAgainst) {
-      if (currentKeys.includes(key)) {return}
-  }
-  currentKeys.push(input);
-}
+    if (forbiddenKeys.includes(event)) {return}
+    if (wasdArray.includes(event)) {
+       forbiddenKeys.push(...wasdArray);
+       currentKeys.push(event);
+     } else if (arrowArray.includes(event)) {
+       forbiddenKeys.push(...arrowArray);
+       currentKeys.push(event); // repeated inside conditionals so that, e.g., 'f' does not cause problems
+     }
+ }
 
 function useKeys(event) {
     if (event.key.toLowerCase() == 'e') {
         reload('left');
     } else if (event.key == '/') {
         reload('right');
-    }else if (currentKeys.includes('a') && (currentKeys.includes('arrowright'))) {
+    } else if (currentKeys.includes('a') && (currentKeys.includes('arrowright'))) {
         checkCylinders('left', 'a', 0.5)
         checkCylinders('right', 'arrowright', 0.5)
     } else if (currentKeys.length > 1) {
@@ -162,8 +173,8 @@ function useKeys(event) {
             checkCylinders('left', currentKeys[0])
         }
     }
-  
-    currentKeys = []
+    forbiddenKeys = [];
+    currentKeys = [];
 }
 
 function reload(gun) {
@@ -209,19 +220,21 @@ function fireShots(direction, chance) {
 }
 
 function killNinjas(direction) {
-    if (direction == 'arrowup' || direction == 'w') {if (enemies.top.shift() != undefined) {score++}} 
-    if (direction == 'arrowleft' || direction == 'a') {if (enemies.left.shift() != undefined) {score++}} 
-    if (direction == 'arrowright' || direction == 'd') {if (enemies.right.shift() != undefined) {score++}}   
-    if (direction == 'arrowdown' || direction == 's') {if (enemies.bottom.shift() != undefined) {score++}} 
+    if (direction == 'arrowup' || direction == 'w') {if (enemies.top.shift() != undefined) {killCount++}} 
+    if (direction == 'arrowleft' || direction == 'a') {if (enemies.left.shift() != undefined) {killCount++}} 
+    if (direction == 'arrowright' || direction == 'd') {if (enemies.right.shift() != undefined) {killCount++}}   
+    if (direction == 'arrowdown' || direction == 's') {if (enemies.bottom.shift() != undefined) {killCount++}} 
+    modulateDifficulty();
 }
 
 /*
-TODO: add up-down trick shot support
+TODO: add up-down trick shot support // THOUGHT: currently, the gun input refers to the absolute position of the shot, it's not relative to Jim's body or direction. That's fine and good, but it means that the trickshot mechanic doesn't make that much sense. When Jim is facing up, 'd' 'ArrowLeft' is a good shot, but when he is facing down, it is a bad shot. You could only make this idea work if: a) Jim never rotates his body (doesn't make sense), b) the trick shot is determined relative to Jim's current rotation (overly impractical and difficult for the player, since control scheme and camera wouldn't rotate). Why don't you just simplify your game, then, and remove this idea, along with the chance variabe etc etc. Or, alternately, just stop him from rotating his body...? A lot would have to be lost to remove the feature, stuff which has been fun. Then again what has it really gotten you? You, yourself, don't even use it in gameplay, it's just a bit confusing. 
+
+
 TODO: decide on sizing
 TODO: refine maths so that, e.g, ninjas run towards Jim's center and don't spawn inside buildings
 TODO: add images to make this more fun
-TODO: implement gun reload feature
-TODO: add reload sound
 TODO: add difficulty incrementing
 TODO: redesign this as a modular program. Modules: main, ninjas, combat or shooting. Each should import all from the others, importing as an object like Ninjas.generateEnemies() inside main.js and Main.ctx inside ninjas.js.
+TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count)
 */
