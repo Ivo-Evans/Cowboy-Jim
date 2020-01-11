@@ -26,7 +26,7 @@ function draw() {
 
 function drawJim() {
    ctx.beginPath();
-   ctx.rect(300, 300, 30, 30); // start start span span
+   ctx.rect(310, 310, 30, 30); // start start span span
    ctx.fillStyle = "red";
    ctx.fill();
    ctx.closePath(); 
@@ -254,8 +254,6 @@ function killNinjas(direction, test) {
 ... but maybe it should engender a less bad accuracy reduction, like down to 80% or something, so that it doesn't scare players away from even trying. 
 
 
-TODO: decide on sizing
-TODO: refine maths so that, e.g, ninjas run towards Jim's center and don't spawn inside buildings
 TODO: add images to make this more fun
 TODO: redesign this as a modular program. Modules: main, ninjas, combat or shooting. Each should import all from the others, importing as an object like Ninjas.generateEnemies() inside main.js and Main.ctx inside ninjas.js.
 TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count)
@@ -284,5 +282,6 @@ TODO: reload time and sounds are sensitive to capacity - a loop. Something like:
     }
 
 TODO: maybe enemy number decrease on % 50 should be greater - round about score 100 this game gets really difficult
-TODO: a popup allerting you to your level up
+TODO: a popup allerting you to your level up, like a speech bubble across one of the buildings or something
+TODO: remove test crutch from killNinjas, implement real gameover condition
 */
