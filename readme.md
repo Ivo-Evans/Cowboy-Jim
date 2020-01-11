@@ -1,9 +1,9 @@
 This is later to be turned into an in-menu page. When the user reads the page, this will also provide time to load the audio resources, which will play with a volume of 0.
 
 ### Backstory ###
-You are at the center of the town square. After a sordid, sexual affair with a two-bit but beautiful whore named Marianne, the ninjas from the east have finally come to get you. She stands, drunk by the fountain. She won't be able to shoot for shit, but she can reload a man's gun. Her pail, milky skin stands out against her black hair and her vivid red, flowered dress, bought for her by the Eastern patron who wished to keep her.
+You are at the center of the town square. After a sordid, sexual affair with a two-bit but beautiful whore named Marianne, the ninjas from the east have finally come to get you. She staggers around, drunk by the fountain. She won't be able to shoot for shit, but she can reload a man's gun. Her pail, milky skin stands out against her black hair and against her vivid red, flowered dress, bought for her by the Eastern patron who she then rejected.
 
-She isn't really worth saving, this Marianne. She is a drunkard and she just likes to have fun. This isn't how you thought you would die. But you are here. You will protect her till the last breath, because you feel there is nothing else for you in this world, not since you lost your wife. You may as well go down, guns a blazing, taking down ninjas as you go...
+She isn't really worth saving, this Marianne. She is a drunkard and she just likes to have fun. You always thought that dying for women was a young man's game. But here you are, at 45, taking a principled stand. You will protect her till the last breath, because you feel there is nothing else for you in this world, not since you lost your wife. You may as well go down, guns a blazing, taking down ninjas as you go...
 
 ### instructions ###
 You play a stationary character, Cowboy Jim, at the center of the town crossroads. You hold two revolvers, which Marianne can reload, but not shoot, for you. 

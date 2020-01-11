@@ -18,11 +18,10 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawJim();
     drawTown();
-    // modulateDifficulty();
     generateEnemies();
     drawEnemies();
     drawScore();
-    drawAmmo()
+    drawAmmo();
 }
 
 function drawJim() {
@@ -43,7 +42,7 @@ function drawTown() {
 function drawBuilding(x, y) {
     ctx.beginPath()
     ctx.rect(x, y, 200, 200);
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "#EEE";
     ctx.fill();
     ctx.closePath();
 }
@@ -99,6 +98,7 @@ function drawEnemies() {
         renderNinja(enemy);
         enemy.x += enemySpeed;
         enemy.y += enemy.sidestep * enemySpeed;
+        if (enemy.x > 300) {killNinjas('arrowLeft')}
         // gameover conditions, gameover state
     })
 
@@ -106,18 +106,21 @@ function drawEnemies() {
         renderNinja(enemy);
         enemy.y += enemySpeed;
         enemy.x += enemy.sidestep * enemySpeed;
+        if (enemy.y > 300) {killNinjas('arrowup')}
     })
     
     enemies.right.forEach(enemy => {
         renderNinja(enemy);
         enemy.x -= enemySpeed;
         enemy.y += enemy.sidestep * enemySpeed;
+        if (enemy.x < 300) {killNinjas('arrowright')}
     })
 
     enemies.bottom.forEach(enemy => {
         renderNinja(enemy);
         enemy.y -= enemySpeed;
         enemy.x += enemy.sidestep * enemySpeed;
+        if (enemy.y < 300) {killNinjas('arrowdown')}
     })
 }
 
@@ -190,6 +193,14 @@ function reload(gun) {
   reload.play();
 }
 
+// function reload(cylinder) { //TODO: this
+//     cylinder = 'reloading 2';
+//     setTimeout(() => cylinder = 6, 2000)
+//     let reload = new Audio('./reload.mp3');
+//     reload.volume = 0.4;
+//     reload.play();    
+// }
+
 function checkCylinders(gun, direction, chance) {
     if (gun == 'right') {
         if (rightCylinder > 0) {
@@ -227,14 +238,40 @@ function killNinjas(direction) {
     modulateDifficulty();
 }
 
-/*
-TODO: add up-down trick shot support // THOUGHT: currently, the gun input refers to the absolute position of the shot, it's not relative to Jim's body or direction. That's fine and good, but it means that the trickshot mechanic doesn't make that much sense. When Jim is facing up, 'd' 'ArrowLeft' is a good shot, but when he is facing down, it is a bad shot. You could only make this idea work if: a) Jim never rotates his body (doesn't make sense), b) the trick shot is determined relative to Jim's current rotation (overly impractical and difficult for the player, since control scheme and camera wouldn't rotate). Why don't you just simplify your game, then, and remove this idea, along with the chance variabe etc etc. Or, alternately, just stop him from rotating his body...? A lot would have to be lost to remove the feature, stuff which has been fun. Then again what has it really gotten you? You, yourself, don't even use it in gameplay, it's just a bit confusing. 
+/*TODO: add up-down trick shot support // THOUGHT: currently, the gun input refers to the absolute position of the shot, it's not relative to Jim's body or direction. That's fine and good, but it means that the trickshot mechanic doesn't make that much sense. When Jim is facing up, 'd' 'ArrowLeft' is a good shot, but when he is facing down, it is a bad shot. You could only make this idea work if: a) Jim never rotates his body (doesn't make sense), b) the trick shot is determined relative to Jim's current rotation (overly impractical and difficult for the player, since control scheme and camera wouldn't rotate). Why don't you just simplify your game, then, and remove this idea, along with the chance variabe etc etc. Or, alternately, just stop him from rotating his body...? A lot would have to be lost to remove the feature, stuff which has been fun. Then again what has it really gotten you? You, yourself, don't even use it in gameplay, it's just a bit confusing. 
+... Maybe it doesn't NEED to make sense. It's a control-scheme dynamic, really - it's there to push player's not to make the most obvious move...
+... but maybe it should engender a less bad accuracy reduction, like down to 80% or something, so that it doesn't scare players away from even trying. 
 
 
 TODO: decide on sizing
 TODO: refine maths so that, e.g, ninjas run towards Jim's center and don't spawn inside buildings
 TODO: add images to make this more fun
-TODO: add difficulty incrementing
 TODO: redesign this as a modular program. Modules: main, ninjas, combat or shooting. Each should import all from the others, importing as an object like Ninjas.generateEnemies() inside main.js and Main.ctx inside ninjas.js.
 TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count)
+TODO: reload time and sounds are sensitive to capacity - a loop. Something like:
+    cylinder = gun == 'left ? : leftCylinder : rightCylinder
+    if (cylinder < 6) {
+        while (cylinder < 7) {
+            // cylinder++
+            // play bullet-adding sound once
+            // maybe wait for the time it takes - but a blocking method like Ruby's sleep would block the entire program....
+        }
+        // play final sound
+    }
+    // actually this is an interesting puzzle, because the best way to do this might be to use setTimeout and recursion... but then how do you play the confirmatory click if and only if the cylinder has been incremented from n..6 ?
+    Actually there's a really good answer in this Stack Overflow question. It's the second answer.
+    https://stackoverflow.com/questions/3583724/how-do-i-add-a-delay-in-a-javascript-loop
+    So you could say:
+    if cylinder < 6 {
+            for(let i = 1; i < 6 - cylinder; i++) {
+                setTimeout(() => {
+                    cylinder++
+                    // play sound
+                }, i * 390) // this is the timeout. As soon as the method is called, i will increment however many times the sound needs to be played, and straight away, it will send out that many timeouts, each separated by however many milliseconds you supply, since they will all be multiplied by i. As each one returns the ammo will increment
+    }
+    // play the other sound
+    }
+
+TODO: maybe enemy number decrease on % 50 should be greater - round about score 100 this game gets really difficult
+TODO: a popup allerting you to your level up
 */
