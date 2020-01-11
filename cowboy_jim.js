@@ -11,7 +11,7 @@ let enemies = {
     left: []
 }
 
-let enemyRate = 0.001 // I think a fun game would involve less enemies running faster
+let enemyRate = 0.01 // I think a fun game would involve less enemies running faster
 let enemySpeed = 4; // floats are acceptable
 
 function draw() {
@@ -42,7 +42,7 @@ function drawTown() {
 function drawBuilding(x, y) {
     ctx.beginPath()
     ctx.rect(x, y, 200, 200);
-    ctx.fillStyle = "#EEE";
+    ctx.fillStyle = "#303030";
     ctx.fill();
     ctx.closePath();
 }
@@ -88,7 +88,7 @@ function generateEnemies() {
 }
 
 function makeNinjaStartPosition() {
-    let lateralPosition = 200 + Math.round(Math.random() * 250);
+    let lateralPosition = 200 + Math.round(Math.random() * 220); // 220 because the canvas is 650 px, the buildings are 200px (leaving 250 px in the middle) and the ninjas are 30px
     let sideStepfactor = (325 - lateralPosition) / 325;
     return [lateralPosition, sideStepfactor];
 }
@@ -98,7 +98,9 @@ function drawEnemies() {
         renderNinja(enemy);
         enemy.x += enemySpeed;
         enemy.y += enemy.sidestep * enemySpeed;
-        if (enemy.x > 300) {killNinjas('arrowLeft')}
+        if (enemy.x > 300) {
+            killNinjas('arrowleft', true);
+        }
         // gameover conditions, gameover state
     })
 
@@ -106,21 +108,27 @@ function drawEnemies() {
         renderNinja(enemy);
         enemy.y += enemySpeed;
         enemy.x += enemy.sidestep * enemySpeed;
-        if (enemy.y > 300) {killNinjas('arrowup')}
+        if (enemy.y > 300) {
+            killNinjas('arrowup', true);
+        }
     })
     
     enemies.right.forEach(enemy => {
         renderNinja(enemy);
         enemy.x -= enemySpeed;
         enemy.y += enemy.sidestep * enemySpeed;
-        if (enemy.x < 300) {killNinjas('arrowright')}
+        if (enemy.x < 300) {
+            killNinjas('arrowright', true);
+        }
     })
 
     enemies.bottom.forEach(enemy => {
         renderNinja(enemy);
         enemy.y -= enemySpeed;
         enemy.x += enemy.sidestep * enemySpeed;
-        if (enemy.y < 300) {killNinjas('arrowdown')}
+        if (enemy.y < 300) {
+            killNinjas('arrowdown', true);
+        }
     })
 }
 
@@ -230,12 +238,15 @@ function fireShots(direction, chance) {
     }
 }
 
-function killNinjas(direction) {
+function killNinjas(direction, test) {
     if (direction == 'arrowup' || direction == 'w') {if (enemies.top.shift() != undefined) {killCount++}} 
     if (direction == 'arrowleft' || direction == 'a') {if (enemies.left.shift() != undefined) {killCount++}} 
     if (direction == 'arrowright' || direction == 'd') {if (enemies.right.shift() != undefined) {killCount++}}   
     if (direction == 'arrowdown' || direction == 's') {if (enemies.bottom.shift() != undefined) {killCount++}} 
-    modulateDifficulty();
+    if (test == false) {
+        modulateDifficulty();
+    }
+    // modulateDifficulty();
 }
 
 /*TODO: add up-down trick shot support // THOUGHT: currently, the gun input refers to the absolute position of the shot, it's not relative to Jim's body or direction. That's fine and good, but it means that the trickshot mechanic doesn't make that much sense. When Jim is facing up, 'd' 'ArrowLeft' is a good shot, but when he is facing down, it is a bad shot. You could only make this idea work if: a) Jim never rotates his body (doesn't make sense), b) the trick shot is determined relative to Jim's current rotation (overly impractical and difficult for the player, since control scheme and camera wouldn't rotate). Why don't you just simplify your game, then, and remove this idea, along with the chance variabe etc etc. Or, alternately, just stop him from rotating his body...? A lot would have to be lost to remove the feature, stuff which has been fun. Then again what has it really gotten you? You, yourself, don't even use it in gameplay, it's just a bit confusing. 
