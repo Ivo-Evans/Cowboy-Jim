@@ -1,0 +1,80 @@
+<!-- This works but I haven't yet built in interruptibility-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>reloadTest</title>
+  </head>
+  <body>
+    <p id="ammoCounter">Left: 6, Right: 6</p>
+    <p>    
+      <button id="shootLeft">shoot left</button>
+      <button id="shootRight">shoot right</button>
+    </p>
+    <p>
+      <button id="leftReload">reload left</button>
+      <button id="rightReload">reload right</button>
+    </p>
+
+
+    <script>
+      let leftShootButton = document.getElementById('shootLeft');
+      let leftReloadButton = document.getElementById('leftReload');
+
+      let rightShootButton = document.getElementById('shootRight');
+      let rightReloadButton = document.getElementById('rightReload');
+
+      let ammoCounter = document.getElementById('ammoCounter');
+      let leftCylinder = {
+        bullets: 6,
+        cycle: 0
+      }
+      let rightCylinder = {
+        bullets: 6,
+        cycle: 0
+        }
+      rightShootButton.addEventListener('click', () => decrementAmmo(rightCylinder));
+      leftShootButton.addEventListener('click', () => decrementAmmo(leftCylinder));
+      rightReloadButton.addEventListener('click', () => reload(rightCylinder));
+      leftReloadButton.addEventListener('click', () => reload(leftCylinder));
+      
+      function decrementAmmo(gun) {
+        gun.bullets--;
+        ammoCounter.innerText = "Left: " + leftCylinder.bullets + ", Right: " + rightCylinder.bullets;
+      }
+
+      function reload(gun) {
+        gun.cycle++;
+        let currentCycle = [gun.cycle][0]; // make copy of current cycle to send into future
+        if (gun.bullets < 6) { // given the way reload is called, this conditional might be unnecessary. Or you could change the way it is called and put the lines above this conditional in this function inside it.
+          for(let i = 1; i < 7 - gun.bullets; i++) {
+            setTimeout(() => insertBullet(gun, currentCycle), i * 600);
+          }
+        }
+      }
+// for the above method
+// if gun.cycle != gun.lastCycle // 
+// stop the reload, play the sound, increment lastCycle
+// else
+// if gun.bullets < 6
+// do all the reloading stuff, increment lastCycle at the same time as you put the last bullet in and play the sound
+
+// if this is indeed the way I go then, because of shared functionality, maybe I should just have a finishReloading method which plays the sound and increments lastCycle.
+
+      function insertBullet(gun, oldCycle, i) {
+        let currentCycle = gun.cycle;
+        console.log(currentCycle == oldCycle);
+        if (currentCycle == oldCycle) {
+          gun.bullets++;
+          ammoCounter.innerText = "Left: " + leftCylinder.bullets + ", Right: " + rightCylinder.bullets;
+          let insert = new Audio('./insert-bullet.mp3');
+          insert.volume = 0.4;
+          insert.play();
+
+        };
+      }
+    </script>
+  </body>
+</html>
