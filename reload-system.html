@@ -66,31 +66,20 @@ reload command has expired.
 
           let currentCycle = [gun.cycle][0];
           if (gun.reloading) {
-            setTimeout(() => insertCylinder(gun, currentCycle), 500);
-            // insertCylinder(gun, currentCycle);
+            // setTimeout(() => insertCylinder(gun, currentCycle), 500);
+            insertCylinder(gun, currentCycle); // this and 7 - gun.bullets in the below timeout for quick reload. Alternately 8 - etc
           } else {
             gun.reloading = !gun.reloading;
             for(let i = 1; i < 7 - gun.bullets; i++) {
               setTimeout(() => insertBullet(gun, currentCycle), i * 500);
             }
-            setTimeout(() => insertCylinder(gun, currentCycle), (8 - gun.bullets) * 500);
+            setTimeout(() => insertCylinder(gun, currentCycle), (7 - gun.bullets) * 500);
           }
         }
       }
 
-      // function reload(gun) {
-      //   gun.cycle++;
-      //   let currentCycle = [gun.cycle][0]; // make copy of current cycle to send into future
-      //   if (gun.bullets < 6) { // given the way reload is called, this conditional might be unnecessary. Or you could change the way it is called and put the lines above this conditional in this function inside it.
-      //     for(let i = 1; i < 7 - gun.bullets; i++) {
-      //       setTimeout(() => insertBullet(gun, currentCycle), i * 600);
-      //     }
-      //   }
-      // }
-
       function insertBullet(gun, oldCycle) {
         let currentCycle = gun.cycle;
-        // console.log(currentCycle == oldCycle);
         if (currentCycle == oldCycle) {
           gun.bullets++;
           ammoCounter.innerText = "Left: " + leftCylinder.bullets + ", Right: " + rightCylinder.bullets;
@@ -102,7 +91,6 @@ reload command has expired.
       }
 
       function insertCylinder(gun, oldCycle) {
-
         if(gun.cycle == oldCycle) {
           gun.reloading = !gun.reloading;
           let insert = new Audio('./insert-cylinder.mp3');
