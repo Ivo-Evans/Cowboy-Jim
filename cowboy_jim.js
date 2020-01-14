@@ -25,14 +25,15 @@ function draw() {
 }
 
 function drawJim() {
-  let jim = new Image() // 16 x 22
-  jim.src = jimsDirection == 'arrowup' || jimsDirection == 'w' ? 
-  './sprites/Jim/jim up.png' 
-  : jimsDirection == 'arrowright' || jimsDirection == 'd' ?
-  './sprites/Jim/jim right.png'
-  : jimsDirection == 'arrowdown' || jimsDirection == 's' ?
-  './sprites/Jim/jim down.png'
-  : './sprites/Jim/jim left.png';
+  let jim = new Image(); // 16 x 22
+  jim.src =
+    jimsDirection == "arrowup" || jimsDirection == "w"
+      ? "./sprites/Jim/jim up.png"
+      : jimsDirection == "arrowright" || jimsDirection == "d"
+      ? "./sprites/Jim/jim right.png"
+      : jimsDirection == "arrowdown" || jimsDirection == "s"
+      ? "./sprites/Jim/jim down.png"
+      : "./sprites/Jim/jim left.png";
   ctx.drawImage(jim, 310, 310, 24, 33); // Jim isn't currently centered // you could just ommit these two measurements for a small Jim. Small Jim looks a bit more situated on the ground. If you want big Jim, maybe you should put some rocks under his feet...
 }
 
@@ -70,7 +71,7 @@ let interval = setInterval(draw, 10);
 
 function modulateDifficulty() {
   if (killCount % 50 == 0) {
-    enemyRate -= 0.003;
+    enemyRate -= 0.002;
     enemySpeed += 0.5;
   } else if (killCount % 10 == 0) {
     enemyRate += 0.001;
@@ -205,7 +206,9 @@ function useKeys(event) {
       checkCylinders(leftCylinder, currentKeys[0]);
     }
   }
-  if (currentKeys.length > 0) {jimsDirection = currentKeys[0]} // a more complex system would have him facing a third direction if his shots were opposites.
+  if (currentKeys.length > 0) {
+    jimsDirection = currentKeys[0];
+  } // a more complex system would have him facing a third direction if his shots were opposites.
   forbiddenKeys = [];
   currentKeys = [];
 }
@@ -253,21 +256,11 @@ function insertCylinder(gun, oldCycle) {
 }
 
 function checkCylinders(gun, direction, chance) {
-  if (gun == rightCylinder) {
-    if (rightCylinder.bullets > 0) {
-      fireShots(direction, chance);
-      rightCylinder.bullets--;
-      if (rightCylinder.bullets < 1) {
-        reload(gun);
-      }
-    }
-  } else {
-    if (leftCylinder.bullets > 0) {
-      fireShots(direction, chance);
-      leftCylinder.bullets--;
-      if (leftCylinder.bullets < 1) {
-        reload(gun);
-      }
+  if (gun.bullets > 0) {
+    fireShots(direction, chance);
+    gun.bullets--;
+    if (gun.bullets < 1) {
+      reload(gun);
     }
   }
 }
@@ -324,7 +317,5 @@ TODO: a popup allerting you to your level up, like a speech bubble across one of
 TODO: remove test crutch from killNinjas, implement real gameover condition
 TODO: randomly generated tumble-weed (you can use the icon from the tileset, and rotate it, like weed.rotate(n * Math.pi / 180)) And you can have a tumbleweed object, just like the ninjas one, which lowers or raises its relevant axis once every time. 
 TODO: implement choice between HaloMode and CodMode. in CodMode the enemies come suddenly and quickly and it's all about twitch (and some luck). In HaloMode enemies come regularly but more slowly and it's all about consistently good playing - but it's less exciting. 
-
-
-TODO: question about an edge-case (maybe an irrelevant one). If the user is just at the end of their reload, i.e. 6 bullets are in and the insertCylinder sound is playing, reloading is set to true. At that point, if they call reload(), reload() will call insertCylinder with a cycle id guaranteed to make insertCylinder effective. insertCylinder will be called twice in quick succession. This means that the sound will play twice - not so bad - but also that, after this, reloading != false, like it should. Solution: instead of inverting the value of reloading at insertCylinder, set it to false; that way if insertCylinder is called twice in quick succession, there may be a duplicate sound, but the async logic will not fall out of sync (no pun intended).
+TODO: give the Jims revolvers
 */
