@@ -83,7 +83,7 @@ reload command has expired.
         if (currentCycle == oldCycle) {
           gun.bullets++;
           ammoCounter.innerText = "Left: " + leftCylinder.bullets + ", Right: " + rightCylinder.bullets;
-          let insert = new Audio('./insert-bullet.mp3');
+          let insert = new Audio('./sound/insert-bullet.mp3');
           insert.volume = 0.4;
           insert.play();
 
@@ -93,7 +93,7 @@ reload command has expired.
       function insertCylinder(gun, oldCycle) {
         if(gun.cycle == oldCycle) {
           gun.reloading = !gun.reloading;
-          let insert = new Audio('./insert-cylinder.mp3');
+          let insert = new Audio('./sounds/insert-cylinder.mp3');
           insert.volume = 0.4;
           insert.play();
         }

@@ -56,8 +56,8 @@ function drawScore() {
 function drawAmmo() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "#FFF";
-    ctx.fillText(leftCylinder, 550, 20);    
-    ctx.fillText(rightCylinder, 550, 40);
+    ctx.fillText(leftCylinder.bullets, 550, 20);    
+    ctx.fillText(rightCylinder.bullets, 550, 40);
 }
 
 let interval = setInterval(draw, 10);
@@ -143,13 +143,21 @@ function renderNinja(ninja) {
 
 /* shooting mechanics */
 
-let leftCylinder = 6;
-let rightCylinder = 6;
+let leftCylinder = {
+    bullets: 6,
+    cycle: 0, // cycle number is used to identify callbacks that are no longer relevant, like Odysseus on his return home.
+    reloading: false
+}
+let rightCylinder = {
+    bullets: 6,
+    cycle: 0,
+    reloading: false
+}
+
 let arrowArray = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
 let wasdArray = ['w', 'a', 's', 'd']
 let currentKeys = [] 
 let forbiddenKeys = [];
-
 
 document.addEventListener('keydown', logKeys, false);
 document.addEventListener('keyup', useKeys, false);
@@ -167,21 +175,21 @@ function logKeys(e) {
  }
 
 function useKeys(event) {
-    if (leftCylinder < 6 && event.key.toLowerCase() == 'e') {
-        reload('left');
-    } else if (rightCylinder < 6 && event.key == '/') {
-        reload('right');
+    if (event.key.toLowerCase() == 'e') {
+        reload(leftCylinder);
+    } else if (event.key == '/') {
+        reload(rightCylinder);
     } else if (currentKeys.includes('a') && (currentKeys.includes('arrowright'))) {
-        checkCylinders('left', 'a', 0.5)
-        checkCylinders('right', 'arrowright', 0.5)
+        if (!rightCylinder.reloading) {checkCylinders(leftCylinder, 'a', 0.5)}
+        if (!leftCylinder.reloading) {checkCylinders(rightCylinder, 'arrowright', 0.5)}
     } else if (currentKeys.length > 1) {
-        checkCylinders('right', currentKeys[0]);
-        checkCylinders('left', currentKeys[1]);
+        if (!rightCylinder.reloading) {checkCylinders(rightCylinder, currentKeys[0])}
+        if (!leftCylinder.reloading) {checkCylinders(leftCylinder, currentKeys[1])}
     } else {
-        if (arrowArray.includes(currentKeys[0])) {
-            checkCylinders('right', currentKeys[0])
-        } else if (wasdArray.includes(currentKeys[0])) {
-            checkCylinders('left', currentKeys[0])
+        if (arrowArray.includes(currentKeys[0]) && !rightCylinder.reloading) {
+            checkCylinders(rightCylinder, currentKeys[0])
+        } else if (wasdArray.includes(currentKeys[0]) && !leftCylinder.reloading) {
+            checkCylinders(leftCylinder, currentKeys[0])
         }
     }
     forbiddenKeys = [];
@@ -189,44 +197,65 @@ function useKeys(event) {
 }
 
 function reload(gun) {
-  if (gun == "left") {
-      leftCylinder = "reloading";
-      setTimeout(() => leftCylinder = 6, 2000)
-  } else if (gun == "right") {
-      rightCylinder = "reloading";
-      setTimeout(() => rightCylinder = 6, 2000)
-  } 
-  let reload = new Audio('./reload.mp3');
-  reload.volume = 0.4;
-  reload.play();
-}
+    if (gun.bullets < 6) {
+      console.log(gun.cycle);
+      gun.cycle++;
 
-// function reload(cylinder) { //TODO: this
-//     cylinder = 'reloading 2';
-//     setTimeout(() => cylinder = 6, 2000)
-//     let reload = new Audio('./reload.mp3');
-//     reload.volume = 0.4;
-//     reload.play();    
-// }
+      let currentCycle = [gun.cycle][0];
+      if (gun.reloading) {
+        // setTimeout(() => insertCylinder(gun, currentCycle), 500);
+        insertCylinder(gun, currentCycle); // this and 7 - gun.bullets in the below timeout for quick reload. Alternately 8 - etc
+      } else {
+        gun.reloading = !gun.reloading;
+        for(let i = 1; i < 7 - gun.bullets; i++) {
+          setTimeout(() => insertBullet(gun, currentCycle), i * 500);
+        }
+        setTimeout(() => insertCylinder(gun, currentCycle), (7 - gun.bullets) * 500);
+      }
+    }
+  }
+
+  function insertBullet(gun, oldCycle) {
+    let currentCycle = gun.cycle;
+    if (currentCycle == oldCycle) {
+      gun.bullets++;
+      let insert = new Audio('./sounds/insert-bullet.mp3');
+      insert.volume = 0.4;
+      insert.play();
+
+    };
+  }
+
+  function insertCylinder(gun, oldCycle) {
+    if(gun.cycle == oldCycle) {
+      let insert = new Audio('./sounds/insert-cylinder.mp3');
+      insert.volume = 0.4;
+      insert.play();
+      setTimeout(() => {gun.reloading = !gun.reloading}, 20); // sound is actually 45 ms
+    }
+  }
+
 
 function checkCylinders(gun, direction, chance) {
-    if (gun == 'right') {
-        if (rightCylinder > 0) {
+    console.log('checkCylinders called')
+    console.log(gun == rightCylinder);
+    if (gun == rightCylinder) {
+        if (rightCylinder.bullets > 0) {
             fireShots(direction, chance);
-            rightCylinder--;
-            if (rightCylinder < 1) {reload(gun)}
+            rightCylinder.bullets--;
+            if (rightCylinder.bullets < 1) {reload(gun)}
         }
     } else {
-        if (leftCylinder > 0) {
+        if (leftCylinder.bullets > 0) {
             fireShots(direction, chance);
-            leftCylinder--;
-            if (leftCylinder < 1) {reload(gun)}
+            leftCylinder.bullets--;
+            if (leftCylinder.bullets < 1) {reload(gun)}
         }
     }
 }
 
 function fireShots(direction, chance) {
-    let gunSound = new Audio('./gunshot.mp3'); // first few sounds don't play... why?
+    let gunSound = new Audio('./sounds/gunshot.mp3'); // first few sounds don't play... why?
     gunSound.volume = 0.5;
     gunSound.play();  
     if (chance) {
@@ -255,32 +284,8 @@ function killNinjas(direction, test) {
 
 
 TODO: add images to make this more fun
-TODO: redesign this as a modular program. Modules: main, ninjas, combat or shooting. Each should import all from the others, importing as an object like Ninjas.generateEnemies() inside main.js and Main.ctx inside ninjas.js.
-TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count)
-TODO: reload time and sounds are sensitive to capacity - a loop. Something like:
-    cylinder = gun == 'left ? : leftCylinder : rightCylinder
-    if (cylinder < 6) {
-        while (cylinder < 7) {
-            // cylinder++
-            // play bullet-adding sound once
-            // maybe wait for the time it takes - but a blocking method like Ruby's sleep would block the entire program....
-        }
-        // play final sound
-    }
-    // actually this is an interesting puzzle, because the best way to do this might be to use setTimeout and recursion... but then how do you play the confirmatory click if and only if the cylinder has been incremented from n..6 ?
-    Actually there's a really good answer in this Stack Overflow question. It's the second answer.
-    https://stackoverflow.com/questions/3583724/how-do-i-add-a-delay-in-a-javascript-loop
-    So you could say:
-    if cylinder < 6 {
-            for(let i = 1; i < 6 - cylinder; i++) {
-                setTimeout(() => {
-                    cylinder++
-                    // play sound
-                }, i * 390) // this is the timeout. As soon as the method is called, i will increment however many times the sound needs to be played, and straight away, it will send out that many timeouts, each separated by however many milliseconds you supply, since they will all be multiplied by i. As each one returns the ammo will increment
-    }
-    // play the other sound after 6 - cylinder * 390
-    }
-
+TODO: redesign this as a modular program. Modules: main, ninjas, shooting, reloading
+TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count
 TODO: maybe enemy number decrease on % 50 should be greater - round about score 100 this game gets really difficult
 TODO: a popup allerting you to your level up, like a speech bubble across one of the buildings or something
 TODO: remove test crutch from killNinjas, implement real gameover condition
