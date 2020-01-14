@@ -25,24 +25,15 @@ function draw() {
 }
 
 function drawJim() {
-//   ctx.beginPath();
-//   ctx.rect(310, 310, 30, 30); // start start span span
-//   ctx.fillStyle = "red";
-//   ctx.fill();
-//   ctx.closePath();
-    let whichJim = jimsDirection == 'arrowup' || jimsDirection == 'w' ? 
-    './sprites/Jim/jim up.png' 
-    : jimsDirection == 'arrowright' || jimsDirection == 'd' ?
-    './sprites/Jim/jim right.png'
-    : jimsDirection == 'arrowdown' || jimsDirection == 's' ?
-    './sprites/Jim/jim down.png'
-    : './sprites/Jim/jim left.png';
-
-
-//   let whichJim = './sprites/Jim/jim right.png'
-  let jim = new Image()
-  jim.src = whichJim;
-  ctx.drawImage(jim, 310, 310); // Jim isn't currently centered and maybe his size should be increased;
+  let jim = new Image() // 16 x 22
+  jim.src = jimsDirection == 'arrowup' || jimsDirection == 'w' ? 
+  './sprites/Jim/jim up.png' 
+  : jimsDirection == 'arrowright' || jimsDirection == 'd' ?
+  './sprites/Jim/jim right.png'
+  : jimsDirection == 'arrowdown' || jimsDirection == 's' ?
+  './sprites/Jim/jim down.png'
+  : './sprites/Jim/jim left.png';
+  ctx.drawImage(jim, 310, 310, 24, 33); // Jim isn't currently centered // you could just ommit these two measurements for a small Jim. Small Jim looks a bit more situated on the ground. If you want big Jim, maybe you should put some rocks under his feet...
 }
 
 function drawTown() {
@@ -228,7 +219,7 @@ function reload(gun) {
       // setTimeout(() => insertCylinder(gun, currentCycle), 500);
       insertCylinder(gun, currentCycle); // this and 6 - gun.bullets in the below timeout for quick reload. Alternately 7 and settimeout above
     } else {
-      gun.reloading = !gun.reloading;
+      gun.reloading = true;
       for (let i = 0; i < 6 - gun.bullets; i++) {
         setTimeout(() => insertBullet(gun, currentCycle), i * 500);
       }
@@ -256,7 +247,7 @@ function insertCylinder(gun, oldCycle) {
     insert.volume = 0.4;
     insert.play();
     setTimeout(() => {
-      gun.reloading = !gun.reloading;
+      gun.reloading = false;
     }, 20); // sound is actually 45 ms
   }
 }
@@ -331,6 +322,8 @@ TODO: redesign this as a modular program. Modules: main, ninjas, shooting, reloa
 TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count
 TODO: a popup allerting you to your level up, like a speech bubble across one of the buildings or something
 TODO: remove test crutch from killNinjas, implement real gameover condition
+TODO: randomly generated tumble-weed (you can use the icon from the tileset, and rotate it, like weed.rotate(n * Math.pi / 180)) And you can have a tumbleweed object, just like the ninjas one, which lowers or raises its relevant axis once every time. 
+TODO: implement choice between HaloMode and CodMode. in CodMode the enemies come suddenly and quickly and it's all about twitch (and some luck). In HaloMode enemies come regularly but more slowly and it's all about consistently good playing - but it's less exciting. 
 
 
 TODO: question about an edge-case (maybe an irrelevant one). If the user is just at the end of their reload, i.e. 6 bullets are in and the insertCylinder sound is playing, reloading is set to true. At that point, if they call reload(), reload() will call insertCylinder with a cycle id guaranteed to make insertCylinder effective. insertCylinder will be called twice in quick succession. This means that the sound will play twice - not so bad - but also that, after this, reloading != false, like it should. Solution: instead of inverting the value of reloading at insertCylinder, set it to false; that way if insertCylinder is called twice in quick succession, there may be a duplicate sound, but the async logic will not fall out of sync (no pun intended).
