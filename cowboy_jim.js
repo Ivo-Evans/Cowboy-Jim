@@ -11,7 +11,7 @@ let enemies = {
     left: []
 }
 
-let enemyRate = 0.01 // I think a fun game would involve less enemies running faster
+let enemyRate = 0.002 // I think a fun game would involve less enemies running faster
 let enemySpeed = 4; // floats are acceptable
 
 function draw() {
@@ -66,7 +66,7 @@ let interval = setInterval(draw, 10);
 
 function modulateDifficulty() {
     if (killCount % 50 == 0) {
-        enemyRate -= 0.002;
+        enemyRate -= 0.003;
         enemySpeed += 0.5;
     } else if (killCount % 10 == 0) {
         enemyRate += 0.001;
@@ -191,6 +191,7 @@ function useKeys(event) {
         } else if (wasdArray.includes(currentKeys[0]) && !leftCylinder.reloading) {
             checkCylinders(leftCylinder, currentKeys[0])
         }
+
     }
     forbiddenKeys = [];
     currentKeys = [];
@@ -198,19 +199,17 @@ function useKeys(event) {
 
 function reload(gun) {
     if (gun.bullets < 6) {
-      console.log(gun.cycle);
       gun.cycle++;
 
       let currentCycle = [gun.cycle][0];
       if (gun.reloading) {
         // setTimeout(() => insertCylinder(gun, currentCycle), 500);
-        insertCylinder(gun, currentCycle); // this and 7 - gun.bullets in the below timeout for quick reload. Alternately 8 - etc
+        insertCylinder(gun, currentCycle); // this and 6 - gun.bullets in the below timeout for quick reload. Alternately 7 and settimeout above
       } else {
         gun.reloading = !gun.reloading;
-        for(let i = 1; i < 7 - gun.bullets; i++) {
-          setTimeout(() => insertBullet(gun, currentCycle), i * 500);
+        for(let i = 0; i < 6 - gun.bullets; i++) {           setTimeout(() => insertBullet(gun, currentCycle), i * 500);
         }
-        setTimeout(() => insertCylinder(gun, currentCycle), (7 - gun.bullets) * 500);
+        setTimeout(() => insertCylinder(gun, currentCycle), (6 - gun.bullets) * 500 - 100);
       }
     }
   }
@@ -235,10 +234,7 @@ function reload(gun) {
     }
   }
 
-
 function checkCylinders(gun, direction, chance) {
-    console.log('checkCylinders called')
-    console.log(gun == rightCylinder);
     if (gun == rightCylinder) {
         if (rightCylinder.bullets > 0) {
             fireShots(direction, chance);
@@ -286,7 +282,9 @@ function killNinjas(direction, test) {
 TODO: add images to make this more fun
 TODO: redesign this as a modular program. Modules: main, ninjas, shooting, reloading
 TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count
-TODO: maybe enemy number decrease on % 50 should be greater - round about score 100 this game gets really difficult
 TODO: a popup allerting you to your level up, like a speech bubble across one of the buildings or something
 TODO: remove test crutch from killNinjas, implement real gameover condition
+
+
+TODO: question about an edge-case (maybe an irrelevant one). If the user is just at the end of their reload, i.e. 6 bullets are in and the insertCylinder sound is playing, reloading is set to true. At that point, if they call reload(), reload() will call insertCylinder with a cycle id guaranteed to make insertCylinder effective. insertCylinder will be called twice in quick succession. This means that the sound will play twice - not so bad - but also that, after this, reloading != false, like it should. Solution: instead of inverting the value of reloading at insertCylinder, set it to false; that way if insertCylinder is called twice in quick succession, there may be a duplicate sound, but the async logic will not fall out of sync (no pun intended).
 */
