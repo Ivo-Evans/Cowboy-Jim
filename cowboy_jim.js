@@ -278,7 +278,7 @@ TODO: reload time and sounds are sensitive to capacity - a loop. Something like:
                     // play sound
                 }, i * 390) // this is the timeout. As soon as the method is called, i will increment however many times the sound needs to be played, and straight away, it will send out that many timeouts, each separated by however many milliseconds you supply, since they will all be multiplied by i. As each one returns the ammo will increment
     }
-    // play the other sound
+    // play the other sound after 6 - cylinder * 390
     }
 
 TODO: maybe enemy number decrease on % 50 should be greater - round about score 100 this game gets really difficult

@@ -1,4 +1,16 @@
 <!-- This works but I haven't yet built in interruptibility-->
+<!--Why not just make a stupid solution, and Then a clever solution? The stupid solution would be add reloading: false
+to the cylinder objects. At the start of reload(), set reloading = !reloading. At the end of insertCylinder, set
+reloading = !reloading. In reload(), if reloading == true, call insertCylinder(gun), else set timeouts to callback with insertBullet and then insertCylinder. 
+
+Good approach right? Well, the problem is, it's not bug-proof. If a timeout has been sent, and then the user
+cancels, 
+
+wait - the bug can be eliminated by ensuring that insertCylinder uses the same kind of cycle identification that
+insertBullet does. If reloading == true, call insertCylinder with gun.cycle; if reloading == false, send it off 
+with currentCycle and if, when it returns, currentCycle (now called oldCycle) != gun.cycle, we know that this 
+reload command has expired. 
+-->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -29,11 +41,13 @@
       let ammoCounter = document.getElementById('ammoCounter');
       let leftCylinder = {
         bullets: 6,
-        cycle: 0
+        cycle: 0,
+        reloading: false
       }
       let rightCylinder = {
         bullets: 6,
-        cycle: 0
+        cycle: 0,
+        reloading: false
         }
       rightShootButton.addEventListener('click', () => decrementAmmo(rightCylinder));
       leftShootButton.addEventListener('click', () => decrementAmmo(leftCylinder));
@@ -46,26 +60,37 @@
       }
 
       function reload(gun) {
-        gun.cycle++;
-        let currentCycle = [gun.cycle][0]; // make copy of current cycle to send into future
-        if (gun.bullets < 6) { // given the way reload is called, this conditional might be unnecessary. Or you could change the way it is called and put the lines above this conditional in this function inside it.
-          for(let i = 1; i < 7 - gun.bullets; i++) {
-            setTimeout(() => insertBullet(gun, currentCycle), i * 600);
+        if (gun.bullets < 6) {
+          console.log(gun.cycle);
+          gun.cycle++;
+
+          let currentCycle = [gun.cycle][0];
+          if (gun.reloading) {
+            setTimeout(() => insertCylinder(gun, currentCycle), 500);
+            // insertCylinder(gun, currentCycle);
+          } else {
+            gun.reloading = !gun.reloading;
+            for(let i = 1; i < 7 - gun.bullets; i++) {
+              setTimeout(() => insertBullet(gun, currentCycle), i * 500);
+            }
+            setTimeout(() => insertCylinder(gun, currentCycle), (8 - gun.bullets) * 500);
           }
         }
       }
-// for the above method
-// if gun.cycle != gun.lastCycle // 
-// stop the reload, play the sound, increment lastCycle
-// else
-// if gun.bullets < 6
-// do all the reloading stuff, increment lastCycle at the same time as you put the last bullet in and play the sound
 
-// if this is indeed the way I go then, because of shared functionality, maybe I should just have a finishReloading method which plays the sound and increments lastCycle.
+      // function reload(gun) {
+      //   gun.cycle++;
+      //   let currentCycle = [gun.cycle][0]; // make copy of current cycle to send into future
+      //   if (gun.bullets < 6) { // given the way reload is called, this conditional might be unnecessary. Or you could change the way it is called and put the lines above this conditional in this function inside it.
+      //     for(let i = 1; i < 7 - gun.bullets; i++) {
+      //       setTimeout(() => insertBullet(gun, currentCycle), i * 600);
+      //     }
+      //   }
+      // }
 
-      function insertBullet(gun, oldCycle, i) {
+      function insertBullet(gun, oldCycle) {
         let currentCycle = gun.cycle;
-        console.log(currentCycle == oldCycle);
+        // console.log(currentCycle == oldCycle);
         if (currentCycle == oldCycle) {
           gun.bullets++;
           ammoCounter.innerText = "Left: " + leftCylinder.bullets + ", Right: " + rightCylinder.bullets;
@@ -74,6 +99,16 @@
           insert.play();
 
         };
+      }
+
+      function insertCylinder(gun, oldCycle) {
+
+        if(gun.cycle == oldCycle) {
+          gun.reloading = !gun.reloading;
+          let insert = new Audio('./insert-cylinder.mp3');
+          insert.volume = 0.4;
+          insert.play();
+        }
       }
     </script>
   </body>
