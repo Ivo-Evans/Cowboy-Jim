@@ -224,19 +224,18 @@ function reload(gun) {
     } else {
       gun.reloading = true;
       for (let i = 0; i < 6 - gun.bullets; i++) {
-        setTimeout(() => insertBullet(gun, currentCycle), i * 500);
+        setTimeout(() => insertBullet(gun, currentCycle), i * 400 + 200);
       }
       setTimeout(
         () => insertCylinder(gun, currentCycle),
-        (6 - gun.bullets) * 500 - 100
+        (6 - gun.bullets) * 400 - 100
       );
     }
   }
 }
 
 function insertBullet(gun, oldCycle) {
-  let currentCycle = gun.cycle;
-  if (currentCycle == oldCycle) {
+  if (gun.cycle == oldCycle) {
     gun.bullets++;
     let insert = new Audio("./sounds/insert-bullet.mp3");
     insert.volume = 0.4;
@@ -257,8 +256,8 @@ function insertCylinder(gun, oldCycle) {
 
 function checkCylinders(gun, direction, chance) {
   if (gun.bullets > 0) {
-    fireShots(direction, chance);
     gun.bullets--;
+    fireShots(direction, chance);
     if (gun.bullets < 1) {
       reload(gun);
     }
