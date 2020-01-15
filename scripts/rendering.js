@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d");
 let jimsDirection = "arrowup";
 let killCount = 0;
 
+let interval = setInterval(draw, 10);
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -45,35 +46,81 @@ function drawBuilding(x, y) {
 }
 
 function drawScore() {
-  ctx.font = "16px Arial";
+  ctx.font = "16px Pixel Cowboy";
   ctx.fillStyle = "#FFF";
   ctx.fillText("Score: " + killCount, 8, 20);
 }
 
 function drawAmmo() {
-  ctx.font = "16px Arial";
+  ctx.font = "16px Pixel Cowboy";
   ctx.fillStyle = "#FFF";
   ctx.fillText(leftCylinder.bullets, 550, 20);
   ctx.fillText(rightCylinder.bullets, 550, 40);
 }
 
-let interval = setInterval(draw, 10);
-
 function checkForGameOver() {
   if (gameover) {
-    console.log(interval);
+    // clear old event listeners for arrow keys
     clearInterval(interval);
-    console.log(interval);
     interval = setInterval(drawGameOverScreen, 10);
   }
 }
 
 function drawGameOverScreen() {
   ctx.beginPath()
-  ctx.rect(100, 100, 450, 450);
+  ctx.rect(100, 180, 450, 290);
   ctx.fillStyle = "#703800";
   ctx.fill();
   ctx.closePath();
+  ctx.font = "32px Pixel Cowboy";
+  ctx.fillStyle ="#ffc16b"
+  ctx.fillText('Game Over', 135, 280);
+  ctx.fillText('BadBoy', 210, 330);
+  ctx.font = "16px Pixel Cowboy";
+  ctx.fillText('Better luck next time.', 140, 400)
+  ctx.font = "11px Pixel Cowboy";
+  ctx.fillText('Click this box or press r to play again', 110, 435);
+  window.addEventListener('keyup', replayFromKeypress);
+  canvas.addEventListener('click', startGame);
+  // yet to implement onclick
+}
+
+function replayFromKeypress(e) {
+  if (e.key.toLowerCase() == 'r') {startGame()}
+}
+
+function startGame() {
+  window.removeEventListener('keyup', replayFromKeypress);
+  canvas.removeEventListener('click', startGame);
+    jimsDirection = "arrowup";
+    killCount = 0;
+    gameover = false;
+  
+    enemies = {
+      top: [],
+      right: [],
+      bottom: [],
+      left: []
+    };
+  
+    leftCylinder = {
+      bullets: 6,
+      cycle: 0, 
+      reloading: false 
+    };
+  
+    rightCylinder = {
+      bullets: 6,
+      cycle: 0,
+      reloading: false
+    };
+    
+    enemyRate = 0.002; // I think a fun game would involve less enemies running faster
+    enemySpeed = 4; // floats are acceptable
+
+    clearInterval(interval);
+    interval = setInterval(draw, 10);
+  // this function could be called right at the beginning, for the first game; then you can call it after the intro menu too. 
 }
 
 /*TODO: add up-down trick shot support // THOUGHT: currently, the gun input refers to the absolute position of the shot, it's not relative to Jim's body or direction. That's fine and good, but it means that the trickshot mechanic doesn't make that much sense. When Jim is facing up, 'd' 'ArrowLeft' is a good shot, but when he is facing down, it is a bad shot. You could only make this idea work if: a) Jim never rotates his body (doesn't make sense), b) the trick shot is determined relative to Jim's current rotation (overly impractical and difficult for the player, since control scheme and camera wouldn't rotate). Why don't you just simplify your game, then, and remove this idea, along with the chance variabe etc etc. Or, alternately, just stop him from rotating his body...? A lot would have to be lost to remove the feature, stuff which has been fun. Then again what has it really gotten you? You, yourself, don't even use it in gameplay, it's just a bit confusing. 
@@ -93,8 +140,11 @@ TODO: randomly generated tumble-weed (you can use the icon from the tileset, and
 
 TODO: implement choice between HaloMode and CodMode. in CodMode the enemies come suddenly and quickly and it's all about twitch (and some luck). In HaloMode enemies come regularly but more slowly and it's all about consistently good playing - but it's less exciting. 
 
+TODO: go through, making all these random numbers variables
+
 TODO: give the Jim pictures revolvers
 TODO: implement ninja images - ninjameges
 TODO: add building images to background - don't redraw them every time draw() is called, that's pointless.
 TODO: add all image directories into a dir called images
+TODO: make your pseudorandom enemy generation more *pseudo* random... but not farcically so. 
 */
