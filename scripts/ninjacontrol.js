@@ -1,3 +1,5 @@
+let gameover = false;
+
 let enemies = {
   top: [],
   right: [],
@@ -44,7 +46,8 @@ function drawEnemies() {
     enemy.x += enemySpeed;
     enemy.y += enemy.sidestep * enemySpeed;
     if (enemy.x > 300) {
-      killNinjas("arrowleft", true);
+      // killNinjas("arrowleft", true);
+      gameover = true;
     }
     // gameover conditions, gameover state
   });
@@ -54,7 +57,8 @@ function drawEnemies() {
     enemy.y += enemySpeed;
     enemy.x += enemy.sidestep * enemySpeed;
     if (enemy.y > 300) {
-      killNinjas("arrowup", true);
+      // killNinjas("arrowup", true);
+      gameover = true;
     }
   });
 
@@ -63,7 +67,8 @@ function drawEnemies() {
     enemy.x -= enemySpeed;
     enemy.y += enemy.sidestep * enemySpeed;
     if (enemy.x < 300) {
-      killNinjas("arrowright", true);
+      // killNinjas("arrowright", true);
+      gameover = true;
     }
   });
 
@@ -72,7 +77,8 @@ function drawEnemies() {
     enemy.y -= enemySpeed;
     enemy.x += enemy.sidestep * enemySpeed;
     if (enemy.y < 300) {
-      killNinjas("arrowdown", true);
+      // killNinjas("arrowdown", true);
+      gameover = true;
     }
   });
 }
