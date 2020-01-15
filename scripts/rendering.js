@@ -76,4 +76,5 @@ TODO: implement choice between HaloMode and CodMode. in CodMode the enemies come
 TODO: give the Jim pictures revolvers
 TODO: implement ninja images - ninjameges
 TODO: add building images to background - don't redraw them every time draw() is called, that's pointless.
+TODO: add all image directories into a dir called images
 */
