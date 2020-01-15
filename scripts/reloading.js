@@ -1,14 +1,3 @@
-let leftCylinder = {
-  bullets: 6,
-  cycle: 0, // cycle number is used to identify callbacks that are no longer relevant, like Odysseus on his return home.
-  reloading: false // maybe you could replace the bool with a mod test for even or odd on cycle. I mean there's no particular reason for this other than to make yourself look clever but still lol. You never know it might shave a single milimilisecond or whatever. 
-};
-let rightCylinder = {
-  bullets: 6,
-  cycle: 0,
-  reloading: false
-};
-
 function reload(gun) {
   if (gun.bullets < 6) {
     gun.cycle++;

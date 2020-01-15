@@ -1,16 +1,3 @@
-let gameover = false;
-
-let enemies = {
-  top: [],
-  right: [],
-  bottom: [],
-  left: []
-};
-
-let enemyRate = 0.002; // I think a fun game would involve less enemies running faster
-let enemySpeed = 4; // floats are acceptable
-
-
 function modulateDifficulty() {
   if (killCount % 50 == 0) {
     enemyRate -= 0.002;

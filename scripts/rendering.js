@@ -1,10 +1,61 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-let jimsDirection = "arrowup";
-let killCount = 0;
+// let jimsDirection = "arrowup";
+// let killCount = 0;
 
-let interval = setInterval(draw, 10);
+// let interval = setInterval(draw, 10);
+
+let jimsDirection;
+let killCount;
+let gameover;
+let enemies;
+let leftCylinder;
+let rightCylinder;
+let enemyRate;
+let enemySpeed;
+let interval;
+
+startGame();
+
+function startGame() {
+  window.removeEventListener("keyup", replayFromKeypress);
+  canvas.removeEventListener("click", startGame);
+  document.removeEventListener("keyup", useKeys, false);
+  document.removeEventListener("keydown", logKeys, false);
+
+  jimsDirection = "arrowup";
+  killCount = 0;
+  gameover = false;
+
+  enemies = {
+    top: [],
+    right: [],
+    bottom: [],
+    left: []
+  };
+
+  leftCylinder = {
+    bullets: 6,
+    cycle: 0,
+    reloading: false
+  };
+
+  rightCylinder = {
+    bullets: 6,
+    cycle: 0,
+    reloading: false
+  }; // maybe you could replace the bool with a mod test for even or odd on cycle. I mean there's no particular reason for this other than to make yourself look clever but still lol. You never know it might shave a single milimilisecond or whatever.
+
+  enemyRate = 0.002; // I think a fun game would involve less enemies running faster
+  enemySpeed = 4; // floats are acceptable
+
+  document.addEventListener("keydown", logKeys, false); // find these functions in shooting.js
+  document.addEventListener("keyup", useKeys, false);
+
+  clearInterval(interval);
+  interval = setInterval(draw, 10);
+}
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -67,60 +118,32 @@ function checkForGameOver() {
 }
 
 function drawGameOverScreen() {
-  ctx.beginPath()
+  ctx.beginPath();
   ctx.rect(100, 180, 450, 290);
   ctx.fillStyle = "#703800";
   ctx.fill();
   ctx.closePath();
+
+  ctx.fillStyle = "#ffc16b";
   ctx.font = "32px Pixel Cowboy";
-  ctx.fillStyle ="#ffc16b"
-  ctx.fillText('Game Over', 135, 280);
-  ctx.fillText('BadBoy', 210, 330);
+  ctx.fillText("Game Over", 135, 270);
+  ctx.fillText("Bad Boy", 210, 320);
+
   ctx.font = "16px Pixel Cowboy";
-  ctx.fillText('Better luck next time.', 140, 400)
+  ctx.fillText("Better luck next time.", 140, 385);
+
   ctx.font = "11px Pixel Cowboy";
-  ctx.fillText('Click this box or press r to play again', 110, 435);
-  window.addEventListener('keyup', replayFromKeypress);
-  canvas.addEventListener('click', startGame);
+  ctx.fillText("Click this box or press r to play again", 110, 435);
+
+  window.addEventListener("keyup", replayFromKeypress);
+  canvas.addEventListener("click", startGame); // should this be on something a bit more specific, or subject to conditions, like a click version of replayFromKeypress
   // yet to implement onclick
 }
 
 function replayFromKeypress(e) {
-  if (e.key.toLowerCase() == 'r') {startGame()}
-}
-
-function startGame() {
-  window.removeEventListener('keyup', replayFromKeypress);
-  canvas.removeEventListener('click', startGame);
-    jimsDirection = "arrowup";
-    killCount = 0;
-    gameover = false;
-  
-    enemies = {
-      top: [],
-      right: [],
-      bottom: [],
-      left: []
-    };
-  
-    leftCylinder = {
-      bullets: 6,
-      cycle: 0, 
-      reloading: false 
-    };
-  
-    rightCylinder = {
-      bullets: 6,
-      cycle: 0,
-      reloading: false
-    };
-    
-    enemyRate = 0.002; // I think a fun game would involve less enemies running faster
-    enemySpeed = 4; // floats are acceptable
-
-    clearInterval(interval);
-    interval = setInterval(draw, 10);
-  // this function could be called right at the beginning, for the first game; then you can call it after the intro menu too. 
+  if (e.key.toLowerCase() == "r") {
+    startGame();
+  }
 }
 
 /*TODO: add up-down trick shot support // THOUGHT: currently, the gun input refers to the absolute position of the shot, it's not relative to Jim's body or direction. That's fine and good, but it means that the trickshot mechanic doesn't make that much sense. When Jim is facing up, 'd' 'ArrowLeft' is a good shot, but when he is facing down, it is a bad shot. You could only make this idea work if: a) Jim never rotates his body (doesn't make sense), b) the trick shot is determined relative to Jim's current rotation (overly impractical and difficult for the player, since control scheme and camera wouldn't rotate). Why don't you just simplify your game, then, and remove this idea, along with the chance variabe etc etc. Or, alternately, just stop him from rotating his body...? A lot would have to be lost to remove the feature, stuff which has been fun. Then again what has it really gotten you? You, yourself, don't even use it in gameplay, it's just a bit confusing. 

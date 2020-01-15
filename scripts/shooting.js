@@ -1,13 +1,9 @@
 /* shooting mechanics */
 
-
 let arrowArray = ["arrowup", "arrowdown", "arrowleft", "arrowright"];
 let wasdArray = ["w", "a", "s", "d"];
 let currentKeys = [];
 let forbiddenKeys = [];
-
-document.addEventListener("keydown", logKeys, false);
-document.addEventListener("keyup", useKeys, false);
 
 function logKeys(e) {
   let event = e.key.toLowerCase();
