@@ -4,6 +4,7 @@ let arrowArray = ["arrowup", "arrowdown", "arrowleft", "arrowright"];
 let wasdArray = ["w", "a", "s", "d"];
 let currentKeys = [];
 let forbiddenKeys = [];
+let handicap = 0.5
 
 function logKeys(e) {
   let event = e.key.toLowerCase();
@@ -26,10 +27,10 @@ function useKeys(event) {
     reload(rightCylinder);
   } else if (currentKeys.includes("a") && currentKeys.includes("arrowright")) {
     if (!rightCylinder.reloading) {
-      checkCylinders(leftCylinder, "a", 0.5);
+      checkCylinders(leftCylinder, "a", handicap);
     }
     if (!leftCylinder.reloading) {
-      checkCylinders(rightCylinder, "arrowright", 0.5);
+      checkCylinders(rightCylinder, "arrowright", handicap);
     }
   } else if (currentKeys.length > 1) {
     if (!rightCylinder.reloading) {

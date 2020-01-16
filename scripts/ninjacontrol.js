@@ -15,15 +15,16 @@ function generateEnemies() {
   } else if (chance < enemyRate / 2) {
     enemies.top.push({ x: thisNinja[0], y: 0, sidestep: thisNinja[1] });
   } else if (chance < (enemyRate / 4) * 3) {
-    enemies.right.push({ x: 650, y: thisNinja[0], sidestep: thisNinja[1] });
+    enemies.right.push({ x: canvasSize, y: thisNinja[0], sidestep: thisNinja[1] });
   } else if (chance < enemyRate) {
-    enemies.bottom.push({ x: thisNinja[0], y: 650, sidestep: thisNinja[1] });
+    enemies.bottom.push({ x: thisNinja[0], y: canvasSize, sidestep: thisNinja[1] });
   }
 }
 
 function makeNinjaStartPosition() {
-  let lateralPosition = 200 + Math.round(Math.random() * 235); // 220 because the canvas is 650 px, the buildings are 200px (leaving 250 px in the middle) and the ninjas are 30px
-  let sideStepfactor = (325 - lateralPosition) / 325;
+  let lateralPosition =
+    buildingSize + Math.round(Math.random() * buildingGap - ninjaSize);
+  let sideStepfactor = (midPoint - lateralPosition) / midPoint;
   return [lateralPosition, sideStepfactor];
 }
 
@@ -32,19 +33,16 @@ function drawEnemies() {
     renderNinja(enemy);
     enemy.x += enemySpeed;
     enemy.y += enemy.sidestep * enemySpeed;
-    if (enemy.x > 300) {
-      // killNinjas("arrowleft", true);
+    if (enemy.x > (canvasSize - jimWidth) / 2 - ninjaSize) {
       gameover = true;
     }
-    // gameover conditions, gameover state
   });
 
   enemies.top.forEach(enemy => {
     renderNinja(enemy);
     enemy.y += enemySpeed;
     enemy.x += enemy.sidestep * enemySpeed;
-    if (enemy.y > 300) {
-      // killNinjas("arrowup", true);
+    if (enemy.y > (canvasSize - jimHeight) / 2 - ninjaSize) {
       gameover = true;
     }
   });
@@ -53,8 +51,7 @@ function drawEnemies() {
     renderNinja(enemy);
     enemy.x -= enemySpeed;
     enemy.y += enemy.sidestep * enemySpeed;
-    if (enemy.x < 300) {
-      // killNinjas("arrowright", true);
+    if (enemy.x < (canvasSize + jimWidth) / 2) {
       gameover = true;
     }
   });
@@ -63,8 +60,7 @@ function drawEnemies() {
     renderNinja(enemy);
     enemy.y -= enemySpeed;
     enemy.x += enemy.sidestep * enemySpeed;
-    if (enemy.y < 300) {
-      // killNinjas("arrowdown", true);
+    if (enemy.y < (canvasSize + jimHeight) / 2) {
       gameover = true;
     }
   });
@@ -72,7 +68,7 @@ function drawEnemies() {
 
 function renderNinja(ninja) {
   ctx.beginPath();
-  ctx.rect(ninja.x, ninja.y, 10, 10);
+  ctx.rect(ninja.x, ninja.y, ninjaSize, ninjaSize);
   ctx.fillStyle = "black";
   ctx.fill();
   ctx.closePath();
