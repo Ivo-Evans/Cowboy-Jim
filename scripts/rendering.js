@@ -19,7 +19,8 @@ let interval;
 startGame();
 
 function startGame() {
-  window.removeEventListener("keyup", replayFromKeypress);
+  window.removeEventListener("keyup", replay);
+  canvas.removeEventListener("click", replay);
   canvas.removeEventListener("click", startGame);
   document.removeEventListener("keyup", useKeys, false);
   document.removeEventListener("keydown", logKeys, false);
@@ -127,7 +128,7 @@ function drawGameOverScreen() {
   ctx.fillStyle = "#ffc16b";
   ctx.font = "32px Pixel Cowboy";
   ctx.fillText("Game Over", 135, 270);
-  ctx.fillText("Bad Boy", 210, 320);
+  ctx.fillText("Bad Boy", 200, 320);
 
   ctx.font = "16px Pixel Cowboy";
   ctx.fillText("Better luck next time.", 140, 385);
@@ -135,16 +136,18 @@ function drawGameOverScreen() {
   ctx.font = "11px Pixel Cowboy";
   ctx.fillText("Click this box or press r to play again", 110, 435);
 
-  window.addEventListener("keyup", replayFromKeypress);
-  canvas.addEventListener("click", startGame); // should this be on something a bit more specific, or subject to conditions, like a click version of replayFromKeypress
+  window.addEventListener("keyup", replay);
+  canvas.addEventListener("click", replay); // should this be on something a bit more specific, or subject to conditions, like a click version of replayFromKeypress
   // yet to implement onclick
 }
 
-function replayFromKeypress(e) {
-  if (e.key.toLowerCase() == "r") {
+function replay(e) {
+  if (e.offsetX >= 100 && e.offsetX <= 550 && e.offsetY >= 180 && e.offsetY <= 470) {
     startGame();
-  }
+  } else if (e.key.toLowerCase() == "r") {startGame()}
+
 }
+
 
 /*TODO: add up-down trick shot support // THOUGHT: currently, the gun input refers to the absolute position of the shot, it's not relative to Jim's body or direction. That's fine and good, but it means that the trickshot mechanic doesn't make that much sense. When Jim is facing up, 'd' 'ArrowLeft' is a good shot, but when he is facing down, it is a bad shot. You could only make this idea work if: a) Jim never rotates his body (doesn't make sense), b) the trick shot is determined relative to Jim's current rotation (overly impractical and difficult for the player, since control scheme and camera wouldn't rotate). Why don't you just simplify your game, then, and remove this idea, along with the chance variabe etc etc. Or, alternately, just stop him from rotating his body...? A lot would have to be lost to remove the feature, stuff which has been fun. Then again what has it really gotten you? You, yourself, don't even use it in gameplay, it's just a bit confusing. 
 ... Maybe it doesn't NEED to make sense. It's a control-scheme dynamic, really - it's there to push player's not to make the most obvious move...
