@@ -2,22 +2,20 @@ const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
 //measurement variables
-let canvasSize = canvas.offsetWidth;
-let midPoint = canvasSize / 2;
-let buildingSize = 200;
-let buildingOffset = canvasSize - buildingSize;
-let buildingGap = buildingOffset - buildingSize;
-let gameoverXOffset = 100;
-let gameoverYOffset = 180;
-let gameoverXSpan = canvasSize - gameoverXOffset * 2; // maybe it would be better to define the span absolutely and the offset relatively,to ensure centering even if you change the canvas size. If you did that, font would fall out of alignment, but I think everything else would be ok.
-let gameoverYSpan = canvasSize - gameoverYOffset * 2;
-let jimWidth = 24;
-let jimHeight = 33; // note that the image itself is 16 x 22
-let jimOffsetTop = (canvasSize - jimHeight) / 2;
-let jimOffsetLeft = (canvasSize - jimHeight) / 2;
-let ninjaSize = 20;
-let killingRangeHorizontal = (canvasSize - jimWidth) / 2 - 10;
-let killingRangeVertical = (canvasSize - jimHeight) / 2 - 10;
+const canvasSize = canvas.offsetWidth;
+const midPoint = canvasSize / 2;
+const buildingSize = 200;
+const buildingOffset = canvasSize - buildingSize;
+const buildingGap = buildingOffset - buildingSize;
+const gameoverXOffset = 100;
+const gameoverYOffset = 180;
+const gameoverXSpan = canvasSize - gameoverXOffset * 2; // maybe it would be better to define the span absolutely and the offset relatively,to ensure centering even if you change the canvas size. If you did change canvas size, font would fall out of alignment but I think everything else would be ok. You could also call these height and width instead of YSpan and XSpan lol.
+const gameoverYSpan = canvasSize - gameoverYOffset * 2;
+const jimWidth = 24;
+const jimHeight = 33; // note that the image itself is 16 x 22
+const jimOffsetTop = (canvasSize - jimHeight) / 2;
+const jimOffsetLeft = (canvasSize - jimHeight) / 2;
+const ninjaSize = 20;
 
 // gameplay variables
 let jimsDirection;
@@ -173,7 +171,6 @@ function replay(e) {
 ... Maybe it doesn't NEED to make sense. It's a control-scheme dynamic, really - it's there to push player's not to make the most obvious move...
 ... but maybe it should engender a less bad accuracy reduction, like down to 80% or something, so that it doesn't scare players away from even trying. 
 
-
 TODO: redesign this as a modular program. Modules: main, ninjas, shooting, reloading
 
 TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count
@@ -183,8 +180,6 @@ TODO: a popup allerting you to your level up, like a speech bubble across one of
 TODO: randomly generated tumble-weed (you can use the icon from the tileset, and rotate it, like weed.rotate(n * Math.pi / 180)) And you can have a tumbleweed object, just like the ninjas one, which lowers or raises its relevant axis once every time. 
 
 TODO: implement choice between HaloMode and CodMode. in CodMode the enemies come suddenly and quickly and it's all about twitch (and some luck). In HaloMode enemies come regularly but more slowly and it's all about consistently good playing - but it's less exciting. 
-
-TODO: go through, making all these random numbers variables
 
 TODO: give the Jim pictures revolvers
 TODO: implement ninja images - ninjameges
