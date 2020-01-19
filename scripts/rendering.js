@@ -3,16 +3,16 @@ const ctx = canvas.getContext("2d");
 
 //measurement variables
 const canvasSize = canvas.offsetWidth;
-const midPoint = canvasSize / 2;
+const canvasMiddle = canvasSize / 2;
 const buildingSize = 200;
 const buildingOffset = canvasSize - buildingSize;
 const buildingGap = buildingOffset - buildingSize;
 const gameoverXOffset = 100;
 const gameoverYOffset = 180;
-const gameoverXSpan = canvasSize - gameoverXOffset * 2; // maybe it would be better to define the span absolutely and the offset relatively,to ensure centering even if you change the canvas size. If you did change canvas size, font would fall out of alignment but I think everything else would be ok. You could also call these height and width instead of YSpan and XSpan lol.
-const gameoverYSpan = canvasSize - gameoverYOffset * 2;
+const gameoverWidth = canvasSize - gameoverXOffset * 2; // maybe it would be better to define the span absolutely and the offset relatively,so that if you resize the canvas the gameover screen won't grow. 
+const gameoverHeight = canvasSize - gameoverYOffset * 2;
 const jimWidth = 24;
-const jimHeight = 33; // note that the image itself is 16 x 22
+const jimHeight = 33; // note that the image itself is 16 x 22 - these scale it up
 const jimOffsetTop = (canvasSize - jimHeight) / 2;
 const jimOffsetLeft = (canvasSize - jimHeight) / 2;
 const ninjaSize = 20;
@@ -33,8 +33,6 @@ startGame();
 function startGame() {
   window.removeEventListener("keyup", replay);
   canvas.removeEventListener("click", replay);
-  document.removeEventListener("keydown", logKeys, false);
-  document.removeEventListener("keyup", useKeys, false);
 
   jimsDirection = "arrowup";
   killCount = 0;
@@ -52,7 +50,7 @@ function startGame() {
     bullets: 6,
     cycle: 0,
     reloading: false
-  }; // maybe you could replace the bool with a mod test for even or odd on cycle. I mean there's no particular reason for this other than to make yourself look clever but still lol. You never know it might shave a single microsecond.
+  }; // maybe you could replace the bool with a mod test for even or odd on cycle (and increment cycle at the beginning and end of a reload cycle). I mean there's no particular reason for this other than to make yourself look clever but still lol. You never know it might shave a single microsecond.
 
   enemyRate = 0.002; // I think a fun game would involve less enemies running faster
   enemySpeed = 4; // floats are acceptable
@@ -76,7 +74,7 @@ function draw() {
 }
 
 function drawJim() {
-  let jim = new Image(); // 16 x 22
+  let jim = new Image(); // original 16 x 22
   jim.src =
     jimsDirection == "arrowup" || jimsDirection == "w"
       ? "./sprites/Jim/jim up.png" // so this works because the filepath is relative to index.html, from whence this function is called, not rendering.js, from whence it originates. Whence.
@@ -85,7 +83,7 @@ function drawJim() {
       : jimsDirection == "arrowdown" || jimsDirection == "s"
       ? "./sprites/Jim/jim down.png"
       : "./sprites/Jim/jim left.png";
-  ctx.drawImage(jim, jimOffsetLeft, jimOffsetTop, jimWidth, jimHeight); // Jim isn't currently centered // you could just ommit these two measurements for a small Jim. Small Jim looks a bit more situated on the ground. If you want big Jim, maybe you should put some rocks under his feet...
+  ctx.drawImage(jim, jimOffsetLeft, jimOffsetTop, jimWidth, jimHeight); // you could just ommit these two measurements for a small Jim. Small Jim looks a bit more situated on the ground. If you want big Jim, maybe you should put some rocks under his feet...
 }
 
 function drawTown() {
@@ -118,20 +116,23 @@ function drawAmmo() {
 
 function checkForGameOver() {
   if (gameover) {
-    // clear old event listeners for arrow keys
+    document.removeEventListener("keydown", logKeys, false);
+    document.removeEventListener("keyup", useKeys, false);
     clearInterval(interval);
     interval = setInterval(drawGameOverScreen, 10);
+    window.addEventListener("keyup", replay);
+    canvas.addEventListener("click", replay);  
   }
 }
 
 function drawGameOverScreen() {
   ctx.beginPath(); // this rectangle could be a picture of a wooden board or something.
-  ctx.rect(gameoverXOffset, gameoverYOffset, gameoverXSpan, gameoverYSpan);
+  ctx.rect(gameoverXOffset, gameoverYOffset, gameoverWidth, gameoverHeight);
   ctx.fillStyle = "#703800";
   ctx.fill();
   ctx.closePath();
 
-  ctx.fillStyle = "#ffc16b"; // x: 100, y: 180
+  ctx.fillStyle = "#ffc16b";
   ctx.font = "32px Pixel Cowboy";
   ctx.fillText("Game Over", gameoverXOffset + 35, gameoverYOffset + 90);
   ctx.fillText("Bad Boy", gameoverXOffset + 100, gameoverYOffset + 140);
@@ -149,9 +150,6 @@ function drawGameOverScreen() {
     gameoverXOffset + 10,
     gameoverYOffset + 245
   );
-
-  window.addEventListener("keyup", replay);
-  canvas.addEventListener("click", replay);
 }
 
 function replay(e) {

@@ -4,7 +4,7 @@ let arrowArray = ["arrowup", "arrowdown", "arrowleft", "arrowright"];
 let wasdArray = ["w", "a", "s", "d"];
 let currentKeys = [];
 let forbiddenKeys = [];
-let handicap = 0.5
+let handicap = 0.5 // note that this is an inverse handicap: 0.8 means you are 0.2 off 100%
 
 function logKeys(e) {
   let event = e.key.toLowerCase();
@@ -97,8 +97,5 @@ function killNinjas(direction, test) {
       killCount++;
     }
   }
-  if (test == false) {
-    modulateDifficulty();
-  }
-  // modulateDifficulty();
+  modulateDifficulty();
 }

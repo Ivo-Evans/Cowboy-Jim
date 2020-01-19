@@ -24,7 +24,7 @@ function generateEnemies() {
 function makeNinjaStartPosition() {
   let lateralPosition =
     buildingSize + Math.round(Math.random() * buildingGap - ninjaSize);
-  let sideStepfactor = (midPoint - lateralPosition) / midPoint;
+  let sideStepfactor = (canvasMiddle - lateralPosition) / canvasMiddle;
   return [lateralPosition, sideStepfactor];
 }
 
