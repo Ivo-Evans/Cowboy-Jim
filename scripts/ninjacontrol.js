@@ -11,13 +11,13 @@ function generateEnemies() {
   let chance = Math.random();
   let thisNinja = makeNinjaStartPosition();
   if (chance < enemyRate / 4) {
-    enemies.left.push({ x: 0, y: thisNinja[0], sidestep: thisNinja[1] });
+    enemies.left.push({ x: 0, y: thisNinja[0], sidestep: thisNinja[1], runcyclePosition: 0 });
   } else if (chance < enemyRate / 2) {
-    enemies.top.push({ x: thisNinja[0], y: 0, sidestep: thisNinja[1] });
+    enemies.top.push({ x: thisNinja[0], y: 0, sidestep: thisNinja[1], runcyclePosition: 0 });
   } else if (chance < (enemyRate / 4) * 3) {
-    enemies.right.push({ x: canvasSize, y: thisNinja[0], sidestep: thisNinja[1] });
+    enemies.right.push({ x: canvasSize, y: thisNinja[0], sidestep: thisNinja[1], runcyclePosition: 0 });
   } else if (chance < enemyRate) {
-    enemies.bottom.push({ x: thisNinja[0], y: canvasSize, sidestep: thisNinja[1] });
+    enemies.bottom.push({ x: thisNinja[0], y: canvasSize, sidestep: thisNinja[1], runcyclePosition: 0 });
   }
 }
 
@@ -30,7 +30,7 @@ function makeNinjaStartPosition() {
 
 function drawEnemies() {
   enemies.left.forEach(enemy => {
-    renderNinja(enemy);
+    renderNinja(enemy, '2');
     enemy.x += enemySpeed;
     enemy.y += enemy.sidestep * enemySpeed;
     if (enemy.x > (canvasSize - jimWidth) / 2 - ninjaSize) {
@@ -39,7 +39,7 @@ function drawEnemies() {
   });
 
   enemies.top.forEach(enemy => {
-    renderNinja(enemy);
+    renderNinja(enemy, '0');
     enemy.y += enemySpeed;
     enemy.x += enemy.sidestep * enemySpeed;
     if (enemy.y > (canvasSize - jimHeight) / 2 - ninjaSize) {
@@ -48,7 +48,7 @@ function drawEnemies() {
   });
 
   enemies.right.forEach(enemy => {
-    renderNinja(enemy);
+    renderNinja(enemy, '1');
     enemy.x -= enemySpeed;
     enemy.y += enemy.sidestep * enemySpeed;
     if (enemy.x < (canvasSize + jimWidth) / 2) {
@@ -57,7 +57,7 @@ function drawEnemies() {
   });
 
   enemies.bottom.forEach(enemy => {
-    renderNinja(enemy);
+    renderNinja(enemy, '3');
     enemy.y -= enemySpeed;
     enemy.x += enemy.sidestep * enemySpeed;
     if (enemy.y < (canvasSize + jimHeight) / 2) {
@@ -66,10 +66,11 @@ function drawEnemies() {
   });
 }
 
-function renderNinja(ninja) {
-  ctx.beginPath();
-  ctx.rect(ninja.x, ninja.y, ninjaSize, ninjaSize);
-  ctx.fillStyle = "black";
-  ctx.fill();
-  ctx.closePath();
+function renderNinja(ninja, direction) {
+  let moment = new Image();
+  let slice = Math.floor(ninja.runcyclePosition) % 8;
+  // alt: let slice = (ninja.runCyclePosition % 8).toFixed(0)
+  moment.src = `./Ninjas/black versions/Ninja-${slice}-${direction}.png`;
+  ctx.drawImage(moment, ninja.x, ninja.y, ninjaSize, ninjaSize);
+  ninja.runcyclePosition += ninjaAnimationSpeedReduction;
 }

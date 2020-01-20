@@ -15,7 +15,9 @@ const jimWidth = 24;
 const jimHeight = 33; // note that the image itself is 16 x 22 - these scale it up
 const jimOffsetTop = (canvasSize - jimHeight) / 2;
 const jimOffsetLeft = (canvasSize - jimHeight) / 2;
-const ninjaSize = 20;
+const ninjaSize = 30;
+const ninjaAnimationSpeedReduction = 1 / 7; // a higher divisor lowers the speed at which ninjas move their legs
+
 
 // gameplay variables
 let jimsDirection;
@@ -53,7 +55,7 @@ function startGame() {
   }; // maybe you could replace the bool with a mod test for even or odd on cycle (and increment cycle at the beginning and end of a reload cycle). I mean there's no particular reason for this other than to make yourself look clever but still lol. You never know it might shave a single microsecond.
 
   enemyRate = 0.002; // I think a fun game would involve less enemies running faster
-  enemySpeed = 4; // floats are acceptable
+  enemySpeed = 2; // floats are acceptable
 
   document.addEventListener("keydown", logKeys, false); // find these functions in shooting.js
   document.addEventListener("keyup", useKeys, false);

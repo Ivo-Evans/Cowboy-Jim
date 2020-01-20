@@ -4,7 +4,6 @@ function reload(gun) {
 
     let currentCycle = [gun.cycle][0];
     if (gun.reloading) {
-      // setTimeout(() => insertCylinder(gun, currentCycle), 500);
       insertCylinder(gun, currentCycle); // this and 6 - gun.bullets in the below timeout for quick reload. Alternately 7 and settimeout above
     } else {
       gun.reloading = true;
