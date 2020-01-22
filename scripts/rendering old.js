@@ -1,26 +1,25 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
+//measurement variables
 const canvasSize = canvas.offsetWidth;
 const canvasMiddle = canvasSize / 2;
 const buildingSize = 200;
 const buildingOffset = canvasSize - buildingSize;
 const buildingGap = buildingOffset - buildingSize;
-const ninjaSize = 30;
-const ninjaAnimationSpeedReduction = 1 / 5; // a higher divisor lowers the speed at which ninjas move their legs
 const gameoverXOffset = 100;
 const gameoverYOffset = 180;
 const gameoverWidth = canvasSize - gameoverXOffset * 2; // maybe it would be better to define the span absolutely and the offset relatively,so that if you resize the canvas the gameover screen won't grow. 
 const gameoverHeight = canvasSize - gameoverYOffset * 2;
-
-
-
 const jimWidth = 24;
 const jimHeight = 33; // note that the image itself is 16 x 22 - these scale it up
 const jimOffsetTop = (canvasSize - jimHeight) / 2;
 const jimOffsetLeft = (canvasSize - jimHeight) / 2;
+const ninjaSize = 30;
+const ninjaAnimationSpeedReduction = 1 / 12; // a higher divisor lowers the speed at which ninjas move their legs
 
 
+// gameplay variables
 let jimsDirection;
 let killCount;
 let gameover;
@@ -32,12 +31,14 @@ let enemySpeed;
 let interval
 
 startGame();
-requestAnimationFrame(draw);
 
 function startGame() {
-  gameover = false;
+  window.removeEventListener("keyup", replay);
+  canvas.removeEventListener("click", replay);
+
   jimsDirection = "arrowup";
   killCount = 0;
+  gameover = false;
 
   enemies = { top: [], right: [], bottom: [], left: [] };
 
@@ -58,24 +59,20 @@ function startGame() {
 
   document.addEventListener("keydown", logKeys, false); // find these functions in shooting.js
   document.addEventListener("keyup", useKeys, false);
+
+  clearInterval(interval);
+  interval = setInterval(draw, 10);
 }
 
 function draw() {
   ctx.clearRect(0, 0, canvasSize, canvasSize);
-  if (!gameover) {
-    drawJim();
-    drawTown();
-    generateEnemies();
-    drawEnemies();
-    drawScore();
-    drawAmmo();
-  } else {
-    switchToGameoverHandlers(); // this logic could go elsewhere, like at beginning of next condition
-    drawTown();
-    drawGameOverScreen()
-  }
-  requestAnimationFrame(draw);
-  //You can also add another conditional for if gameBeginning. the drawMenu function or an associated function can call startGame(), which will set gameStarted to true and gameover to false. We will initialise gameStarted as true, and call requestAnimationFrame(draw); in the global scope. 
+  drawJim();
+  drawTown();
+  generateEnemies();
+  drawEnemies();
+  drawScore();
+  drawAmmo();
+  checkForGameOver();
 }
 
 function drawJim() {
@@ -119,10 +116,12 @@ function drawAmmo() {
   ctx.fillText(rightCylinder.bullets, canvasSize - 100, 40);
 }
 
-function switchToGameoverHandlers() {
+function checkForGameOver() {
   if (gameover) {
     document.removeEventListener("keydown", logKeys, false);
     document.removeEventListener("keyup", useKeys, false);
+    clearInterval(interval);
+    interval = setInterval(drawGameOverScreen, 10);
     window.addEventListener("keyup", replay);
     canvas.addEventListener("click", replay);  
   }
@@ -163,11 +162,30 @@ function replay(e) {
     e.offsetY <= canvasSize - gameoverYOffset
   ) {
     startGame();
-    window.removeEventListener("keyup", replay);
-    canvas.removeEventListener("click", replay); 
-  } else if (e.key.toLowerCase() == "r") { // maybe these should be a disjunction... Would make code dryer but LHS of disjunction is already a long conjunction... check out the ctx.isPointInPath method....
+  } else if (e.key.toLowerCase() == "r") {
     startGame();
-    window.removeEventListener("keyup", replay);
-    canvas.removeEventListener("click", replay); 
   }
 }
+
+/*TODO: add up-down trick shot support // THOUGHT: currently, the gun input refers to the absolute position of the shot, it's not relative to Jim's body or direction. That's fine and good, but it means that the trickshot mechanic doesn't make that much sense. When Jim is facing up, 'd' 'ArrowLeft' is a good shot, but when he is facing down, it is a bad shot. You could only make this idea work if: a) Jim never rotates his body (doesn't make sense), b) the trick shot is determined relative to Jim's current rotation (overly impractical and difficult for the player, since control scheme and camera wouldn't rotate). Why don't you just simplify your game, then, and remove this idea, along with the chance variabe etc etc. Or, alternately, just stop him from rotating his body...? A lot would have to be lost to remove the feature, stuff which has been fun. Then again what has it really gotten you? You, yourself, don't even use it in gameplay, it's just a bit confusing. 
+... Maybe it doesn't NEED to make sense. It's a control-scheme dynamic, really - it's there to push player's not to make the most obvious move...
+... but maybe it should engender a less bad accuracy reduction, like down to 80% or something, so that it doesn't scare players away from even trying. 
+
+TODO: redesign this as a modular program. Modules: main, ninjas, shooting, reloading
+
+TODO: double points for using both guns at once to kill two enemies (implementation: a killcount and a bonus count feature, which are combined in the score display. Increment difficulty based on kill count, but not on score count
+
+TODO: a popup allerting you to your level up, like a speech bubble across one of the buildings or something
+
+TODO: randomly generated tumble-weed (you can use the icon from the tileset, and rotate it, like weed.rotate(n * Math.pi / 180)) And you can have a tumbleweed object, just like the ninjas one, which lowers or raises its relevant axis once every time. 
+
+TODO: implement choice between HaloMode and CodMode. in CodMode the enemies come suddenly and quickly and it's all about twitch (and some luck). In HaloMode enemies come regularly but more slowly and it's all about consistently good playing - but it's less exciting. 
+
+TODO: give the Jim pictures revolvers
+TODO: implement ninja images - ninjameges
+TODO: add building images to background - don't redraw them every time draw() is called, that's pointless.
+TODO: add all image directories into a dir called images
+TODO: make your pseudorandom enemy generation more *pseudo* random... but not farcically so. 
+TODO: add a license
+TODO: make a framerate constant, use it for both gameover and start, and set it to 16. Other variables, like enemySpeed, enemyRate, and ninjaAnimationSpeed (or whatever) will need to be increased or decreased.
+*/
