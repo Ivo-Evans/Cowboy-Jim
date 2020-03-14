@@ -10,16 +10,13 @@ const ninjaSize = 30;
 const ninjaAnimationSpeedReduction = 1 / 5; // a higher divisor lowers the speed at which ninjas move their legs
 const gameoverXOffset = 100;
 const gameoverYOffset = 180;
-const gameoverWidth = canvasSize - gameoverXOffset * 2; // maybe it would be better to define the span absolutely and the offset relatively,so that if you resize the canvas the gameover screen won't grow. 
+const gameoverWidth = canvasSize - gameoverXOffset * 2; // maybe it would be better to define the span absolutely and the offset relatively,so that if you resize the canvas the gameover screen won't grow.
 const gameoverHeight = canvasSize - gameoverYOffset * 2;
-
-
 
 const jimWidth = 24;
 const jimHeight = 33; // note that the image itself is 16 x 22 - these scale it up
 const jimOffsetTop = (canvasSize - jimHeight) / 2;
 const jimOffsetLeft = (canvasSize - jimHeight) / 2;
-
 
 let jimsDirection;
 let killCount;
@@ -29,7 +26,7 @@ let leftCylinder;
 let rightCylinder;
 let enemyRate;
 let enemySpeed;
-let interval
+let interval;
 
 startGame();
 requestAnimationFrame(draw);
@@ -72,20 +69,20 @@ function draw() {
   } else {
     switchToGameoverHandlers(); // this logic could go elsewhere, like at beginning of next condition
     drawTown();
-    drawGameOverScreen()
+    drawGameOverScreen();
   }
   requestAnimationFrame(draw);
-  //You can also add another conditional for if gameBeginning. the drawMenu function or an associated function can call startGame(), which will set gameStarted to true and gameover to false. We will initialise gameStarted as true, and call requestAnimationFrame(draw); in the global scope. 
+  //You can also add another conditional for if gameBeginning. the drawMenu function or an associated function can call startGame(), which will set gameStarted to true and gameover to false. We will initialise gameStarted as true, and call requestAnimationFrame(draw); in the global scope.
 }
 
 function drawJim() {
   let jim = new Image(); // original 16 x 22
   jim.src =
-    jimsDirection == "arrowup" || jimsDirection == "w"
+    jimsDirection === "arrowup" || jimsDirection === "w"
       ? "./sprites/Jim/jim up.png" // so this works because the filepath is relative to index.html, from whence this function is called, not rendering.js, from whence it originates. Whence.
-      : jimsDirection == "arrowright" || jimsDirection == "d"
+      : jimsDirection === "arrowright" || jimsDirection === "d"
       ? "./sprites/Jim/jim right.png"
-      : jimsDirection == "arrowdown" || jimsDirection == "s"
+      : jimsDirection === "arrowdown" || jimsDirection === "s"
       ? "./sprites/Jim/jim down.png"
       : "./sprites/Jim/jim left.png";
   ctx.drawImage(jim, jimOffsetLeft, jimOffsetTop, jimWidth, jimHeight); // you could just ommit these two measurements for a small Jim. Small Jim looks a bit more situated on the ground. If you want big Jim, maybe you should put some rocks under his feet...
@@ -124,7 +121,7 @@ function switchToGameoverHandlers() {
     document.removeEventListener("keydown", logKeys, false);
     document.removeEventListener("keyup", useKeys, false);
     window.addEventListener("keyup", replay);
-    canvas.addEventListener("click", replay);  
+    canvas.addEventListener("click", replay);
   }
 }
 
@@ -164,10 +161,11 @@ function replay(e) {
   ) {
     startGame();
     window.removeEventListener("keyup", replay);
-    canvas.removeEventListener("click", replay); 
-  } else if (e.key.toLowerCase() == "r") { // maybe these should be a disjunction... Would make code dryer but LHS of disjunction is already a long conjunction... check out the ctx.isPointInPath method....
+    canvas.removeEventListener("click", replay);
+  } else if (e.key.toLowerCase() === "r") {
+    // maybe these should be a disjunction... Would make code dryer but LHS of disjunction is already a long conjunction... check out the ctx.isPointInPath method....
     startGame();
     window.removeEventListener("keyup", replay);
-    canvas.removeEventListener("click", replay); 
+    canvas.removeEventListener("click", replay);
   }
 }

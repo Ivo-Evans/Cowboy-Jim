@@ -1,10 +1,8 @@
-/* shooting mechanics */
-
 let arrowArray = ["arrowup", "arrowdown", "arrowleft", "arrowright"];
 let wasdArray = ["w", "a", "s", "d"];
 let currentKeys = [];
 let forbiddenKeys = [];
-let handicap = 0.5 // note that this is an inverse handicap: 0.8 means you are 0.2 off 100%
+let handicap = 0.5; // note that this is an inverse accuracy handicap: 0.8 means you have a 20% reduction in
 
 function logKeys(e) {
   let event = e.key.toLowerCase();
@@ -21,9 +19,9 @@ function logKeys(e) {
 }
 
 function useKeys(event) {
-  if (event.key.toLowerCase() == "e") {
+  if (event.key.toLowerCase() === "e") {
     reload(leftCylinder);
-  } else if (event.key == "/") {
+  } else if (event.key === "/") {
     reload(rightCylinder);
   } else if (currentKeys.includes("a") && currentKeys.includes("arrowright")) {
     if (!rightCylinder.reloading) {
@@ -77,22 +75,22 @@ function fireShots(direction, chance) {
 }
 
 function killNinjas(direction, test) {
-  if (direction == "arrowup" || direction == "w") {
+  if (direction === "arrowup" || direction === "w") {
     if (enemies.top.shift() != undefined) {
       killCount++;
     }
   }
-  if (direction == "arrowleft" || direction == "a") {
+  if (direction === "arrowleft" || direction === "a") {
     if (enemies.left.shift() != undefined) {
       killCount++;
     }
   }
-  if (direction == "arrowright" || direction == "d") {
+  if (direction === "arrowright" || direction === "d") {
     if (enemies.right.shift() != undefined) {
       killCount++;
     }
   }
-  if (direction == "arrowdown" || direction == "s") {
+  if (direction === "arrowdown" || direction === "s") {
     if (enemies.bottom.shift() != undefined) {
       killCount++;
     }
