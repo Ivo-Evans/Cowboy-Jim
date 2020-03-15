@@ -1,9 +1,9 @@
 function modulateDifficulty() {
   if (killCount % 50 === 0) {
-    enemyRate -= 0.002;
-    enemySpeed += 0.5;
+    enemyRate -= 0.125;
+    enemySpeed += 3.125;
   } else if (killCount % 10 === 0) {
-    enemyRate += 0.001;
+    enemyRate += 0.06;
   }
 }
 

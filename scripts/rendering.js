@@ -50,8 +50,8 @@ function startGame() {
     reloading: false
   }; // maybe you could replace the bool with a mod test for even or odd on cycle (and increment cycle at the beginning and end of a reload cycle). I mean there's no particular reason for this other than to make yourself look clever but still lol. You never know it might shave a single microsecond.
 
-  enemyRate = 0.004; // I think a fun game would involve less enemies running faster
-  enemySpeed = 240; // floats are acceptable //this was 4 before delta
+  enemyRate = 0.25;
+  enemySpeed = 240; 
 
   document.addEventListener("keydown", logKeys, false); // find these functions in shooting.js
   document.addEventListener("keyup", useKeys, false);
