@@ -18,11 +18,11 @@ const jimHeight = 33; // note that the image itself is 16 x 22 - these scale it 
 const jimOffsetTop = (canvasSize - jimHeight) / 2;
 const jimOffsetLeft = (canvasSize - jimHeight) / 2;
 
-const enemyRateStart = 0.004
-const enemySpeedStart = 240
-const enemyRateIncrement = 0.001
-const enemyRateDecrement = 0.002
-const enemySpeedIncrement = 32.5
+const enemyRateStart = 0.004;
+const enemySpeedStart = 240;
+const enemyRateIncrement = 0.001;
+const enemyRateDecrement = 0.002;
+const enemySpeedIncrement = 32.5;
 
 let jimsDirection;
 let killCount;
@@ -36,10 +36,25 @@ let interval;
 
 let lastRender = 0;
 
-startGame();
-requestAnimationFrame(draw);
+let sounds = [
+  new Audio("./sounds/gunshot.mp3"),
+  new Audio("./sounds/insert-bullet.mp3"),
+  new Audio("./sounds/insert-cylinder.mp3")
+];
 
-function startGame() {
+sounds.forEach(sound => sound.addEventListener("canplaythrough", loader));
+
+function loader() {
+  if (
+    sounds[0].readyState + sounds[1].readyState + sounds[2].readyState ===
+    12
+  ) {
+    newGameState();
+    requestAnimationFrame(draw);
+  }
+}
+
+function newGameState() {
   gameover = false;
   jimsDirection = "arrowup";
   killCount = 0;
@@ -171,14 +186,14 @@ function replay(e) {
       e.offsetY <= canvasSize - gameoverYOffset) ||
     e.key.toLowerCase() === "r"
   ) {
-    startGame();
+    newGameState();
     window.removeEventListener("keyup", replay);
     canvas.removeEventListener("click", replay);
   }
 }
 
 /*
-TODO: put variables in their own file? Remove them from the global namespace with iifes that return objects?
+TODO: put variables in their own file? Remove them from the global namespace with IIFEs that give objects to variables? The problem is that this will make your later code far wordier and harder to read
 TODO: play gunshot sound once - play() returns a promise - and then() call requestAnimationFrame(draw). Alternately play() each sound and Promise.all() them.
 TODO: buildings into background. Get it done. 
 */

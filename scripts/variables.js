@@ -1,7 +1,7 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-const dimensions = function(){
+const dimensions = (function() {
   const canvasSize = canvas.offsetWidth;
   const canvasMiddle = canvasSize / 2;
   const buildingSize = 200;
@@ -18,5 +18,56 @@ const dimensions = function(){
   const jimHeight = 33; // note that the image itself is 16 x 22 - these scale it up
   const jimOffsetTop = (canvasSize - jimHeight) / 2;
   const jimOffsetLeft = (canvasSize - jimHeight) / 2;
-  return {canvasSize, canvasMiddle, buildingSize, buildingOffset, buildingGap, ninjaSize, ninjaAnimationSpeedReduction, gameoverXOffset, gameoverYOffset, gameoverWidth, gameoverHeight, jimWidth, jimHeight, jimOffsetTop, jimOffsetLeft}
-}()
+  return {
+    canvasSize,
+    canvasMiddle,
+    buildingSize,
+    buildingOffset,
+    buildingGap,
+    ninjaSize,
+    ninjaAnimationSpeedReduction, // not even a dimension ffs lol
+    gameoverXOffset,
+    gameoverYOffset,
+    gameoverWidth,
+    gameoverHeight,
+    jimWidth,
+    jimHeight,
+    jimOffsetTop,
+    jimOffsetLeft
+  };
+})();
+
+const difficultyRules = {
+  enemyRateStart: 0.004,
+  enemySpeedStart: 240,
+  enemyRateIncrement: 0.001,
+  enemyRateDecrement: 0.002,
+  enemySpeedIncrement: 32.5
+};
+
+let lastRender = 0;
+let gamestate = newGame();
+
+function newGame(params) {
+  document.addEventListener("keydown", logKeys, false); // find these functions in shooting.js
+  document.addEventListener("keyup", useKeys, false);
+
+  return {
+    gameover: false,
+    jimsDirection: "arrowup",
+    killCount: 0,
+    enemies: { top: [], right: [], bottom: [], left: [] },
+    leftCylinder: {
+      bullets: 6,
+      cycle: 0,
+      reloading: false
+    },
+    rightCylinder: {
+      bullets: 6,
+      cycle: 0,
+      reloading: false
+    },
+    enemyRate: difficultyRules.enemyRateStart,
+    enemySpeed: difficultyRules.enemySpeedStart
+  };
+}
