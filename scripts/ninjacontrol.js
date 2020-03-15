@@ -48,11 +48,11 @@ function makeNinjaStartPosition() {
   return [lateralPosition, sideStepfactor];
 }
 
-function drawEnemies() {
+function drawEnemies(delta) {
   enemies.left.forEach(enemy => {
     renderNinja(enemy, "2");
-    enemy.x += enemySpeed;
-    enemy.y += enemy.sidestep * enemySpeed;
+    enemy.x += enemySpeed * delta;
+    enemy.y += enemy.sidestep * enemySpeed * delta;
     if (enemy.x > (canvasSize - jimWidth) / 2 - ninjaSize) {
       gameover = true;
     }
@@ -60,8 +60,8 @@ function drawEnemies() {
 
   enemies.top.forEach(enemy => {
     renderNinja(enemy, "0");
-    enemy.y += enemySpeed;
-    enemy.x += enemy.sidestep * enemySpeed;
+    enemy.y += enemySpeed * delta;
+    enemy.x += enemy.sidestep * enemySpeed * delta;
     if (enemy.y > (canvasSize - jimHeight) / 2 - ninjaSize) {
       gameover = true;
     }
@@ -69,8 +69,8 @@ function drawEnemies() {
 
   enemies.right.forEach(enemy => {
     renderNinja(enemy, "1");
-    enemy.x -= enemySpeed;
-    enemy.y += enemy.sidestep * enemySpeed;
+    enemy.x -= enemySpeed * delta;
+    enemy.y += enemy.sidestep * enemySpeed * delta;
     if (enemy.x < (canvasSize + jimWidth) / 2) {
       gameover = true;
     }
@@ -78,8 +78,8 @@ function drawEnemies() {
 
   enemies.bottom.forEach(enemy => {
     renderNinja(enemy, "3");
-    enemy.y -= enemySpeed;
-    enemy.x += enemy.sidestep * enemySpeed;
+    enemy.y -= enemySpeed * delta;
+    enemy.x += enemy.sidestep * enemySpeed * delta;
     if (enemy.y < (canvasSize + jimHeight) / 2) {
       gameover = true;
     }

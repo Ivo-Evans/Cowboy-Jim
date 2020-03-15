@@ -51,19 +51,24 @@ function startGame() {
   }; // maybe you could replace the bool with a mod test for even or odd on cycle (and increment cycle at the beginning and end of a reload cycle). I mean there's no particular reason for this other than to make yourself look clever but still lol. You never know it might shave a single microsecond.
 
   enemyRate = 0.004; // I think a fun game would involve less enemies running faster
-  enemySpeed = 4; // floats are acceptable
+  enemySpeed = 240; // floats are acceptable //this was 4 before delta
 
   document.addEventListener("keydown", logKeys, false); // find these functions in shooting.js
   document.addEventListener("keyup", useKeys, false);
 }
 
-function draw() {
+let lastRender = 0;
+
+function draw(elapsedTime) {
   ctx.clearRect(0, 0, canvasSize, canvasSize);
+  let delta = (elapsedTime - lastRender) / 1000; // this number, a varying number in the region of 0.16, is the number of whole units of other things (e.g. ninja movements) per frame - so 1 ninja movement would be coded as delta * ninja_movement. It accounts for different speeds between frames and browsers. But it also means that other things should be recalibrated, ie multiplied by 60
+  lastRender = elapsedTime
+
   if (!gameover) {
     drawJim();
     drawTown();
     generateEnemies();
-    drawEnemies();
+    drawEnemies(delta);
     drawScore();
     drawAmmo();
   } else {
