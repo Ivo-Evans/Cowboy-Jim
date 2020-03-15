@@ -15,28 +15,48 @@ function generateEnemies() {
       x: 0,
       y: thisNinja[0],
       sidestep: thisNinja[1],
-      runcyclePosition: 0
+      runcyclePosition: 0,
+      images: Array(8).fill(null).map((img, i) => {
+        img = new Image()
+        img.src = `./Ninjas/black versions/Ninja-${i}-2.png`;
+        return img;
+      })
     });
   } else if (chance < enemyRate / 2) {
     enemies.top.push({
       x: thisNinja[0],
       y: 0,
       sidestep: thisNinja[1],
-      runcyclePosition: 0
+      runcyclePosition: 0,
+      images: Array(8).fill(null).map((img, i) => {
+        img = new Image();
+        img.src = `./Ninjas/black versions/Ninja-${i}-0.png`;
+        return img;
+      })
     });
   } else if (chance < (enemyRate / 4) * 3) {
     enemies.right.push({
       x: canvasSize,
       y: thisNinja[0],
       sidestep: thisNinja[1],
-      runcyclePosition: 0
+      runcyclePosition: 0,
+      images: Array(8).fill(null).map((img, i) => {
+        img = new Image();
+        img.src = `./Ninjas/black versions/Ninja-${i}-1.png`;
+        return img;
+      })
     });
   } else if (chance < enemyRate) {
     enemies.bottom.push({
       x: thisNinja[0],
       y: canvasSize,
       sidestep: thisNinja[1],
-      runcyclePosition: 0
+      runcyclePosition: 0,
+      images: Array(8).fill(null).map((img, i) => {
+        img = new Image();
+        img.src = `./Ninjas/black versions/Ninja-${i}-3.png`;
+        return img;
+      })
     });
   }
 }
@@ -87,9 +107,7 @@ function drawEnemies(delta) {
 }
 
 function renderNinja(ninja, direction) {
-  let moment = new Image();
-  let slice = Math.round(ninja.runcyclePosition) % 8;
-  moment.src = `./Ninjas/black versions/Ninja-${slice}-${direction}.png`;
-  ctx.drawImage(moment, ninja.x, ninja.y, ninjaSize, ninjaSize);
+  let moment = Math.round(ninja.runcyclePosition) % 8;
+  ctx.drawImage(ninja.images[moment], ninja.x, ninja.y, ninjaSize, ninjaSize);
   ninja.runcyclePosition += ninjaAnimationSpeedReduction;
 }
