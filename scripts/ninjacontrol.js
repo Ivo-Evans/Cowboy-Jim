@@ -106,7 +106,7 @@ function drawEnemies(delta) {
   });
 }
 
-function renderNinja(ninja, direction) {
+function renderNinja(ninja) {
   let moment = Math.round(ninja.runcyclePosition) % 8;
   ctx.drawImage(ninja.images[moment], ninja.x, ninja.y, ninjaSize, ninjaSize);
   ninja.runcyclePosition += ninjaAnimationSpeedReduction;
