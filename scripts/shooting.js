@@ -5,6 +5,7 @@ let forbiddenKeys = [];
 let handicap = 0.5; // note that this is an inverse accuracy handicap: 0.8 means you have a 20% reduction in
 
 function logKeys(e) {
+  e.preventDefault();
   let event = e.key.toLowerCase();
   if (forbiddenKeys.includes(event)) {
     return;

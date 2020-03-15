@@ -67,7 +67,7 @@ function startGame() {
 
 function draw(elapsedTime) {
   ctx.clearRect(0, 0, canvasSize, canvasSize);
-  let delta = (elapsedTime - lastRender) / 1000; // this number, a varying number in the region of 0.16, is the number of whole units of other things (e.g. ninja movements) per frame - so 1 ninja movement would be coded as delta * ninja_movement. It accounts for different speeds between frames and browsers. But it also means that other things should be recalibrated, ie multiplied by 60
+  let delta = (elapsedTime - lastRender) / 1000; // this number, a varying number in the region of 0.16, is the number of whole units of other things (e.g. ninja movements) per frame - so 1 ninja movement would be coded as delta * ninja_movement. It accounts for different speeds between frames and browsers. But it also means that other things should be recalibrated
   lastRender = elapsedTime;
 
   if (!gameover) {
@@ -178,7 +178,7 @@ function replay(e) {
 }
 
 /*
-TODO: put variables in their own file?
+TODO: put variables in their own file? Remove them from the global namespace with iifes that return objects?
 TODO: play gunshot sound once - play() returns a promise - and then() call requestAnimationFrame(draw). Alternately play() each sound and Promise.all() them.
 TODO: buildings into background. Get it done. 
 */
