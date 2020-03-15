@@ -18,6 +18,12 @@ const jimHeight = 33; // note that the image itself is 16 x 22 - these scale it 
 const jimOffsetTop = (canvasSize - jimHeight) / 2;
 const jimOffsetLeft = (canvasSize - jimHeight) / 2;
 
+const enemyRateStart = 0.004
+const enemySpeedStart = 240
+const enemyRateIncrement = 0.001
+const enemyRateDecrement = 0.002
+const enemySpeedIncrement = 32.5
+
 let jimsDirection;
 let killCount;
 let gameover;
@@ -27,6 +33,8 @@ let rightCylinder;
 let enemyRate;
 let enemySpeed;
 let interval;
+
+let lastRender = 0;
 
 startGame();
 requestAnimationFrame(draw);
@@ -50,19 +58,17 @@ function startGame() {
     reloading: false
   }; // maybe you could replace the bool with a mod test for even or odd on cycle (and increment cycle at the beginning and end of a reload cycle). I mean there's no particular reason for this other than to make yourself look clever but still lol. You never know it might shave a single microsecond.
 
-  enemyRate = 0.004; // I think a fun game would involve less enemies running faster
-  enemySpeed = 240; // floats are acceptable //this was 4 before delta
+  enemyRate = enemyRateStart; // I think a fun game would involve less enemies running faster
+  enemySpeed = enemySpeedStart; // floats are acceptable //this was 4 before delta
 
   document.addEventListener("keydown", logKeys, false); // find these functions in shooting.js
   document.addEventListener("keyup", useKeys, false);
 }
 
-let lastRender = 0;
-
 function draw(elapsedTime) {
   ctx.clearRect(0, 0, canvasSize, canvasSize);
   let delta = (elapsedTime - lastRender) / 1000; // this number, a varying number in the region of 0.16, is the number of whole units of other things (e.g. ninja movements) per frame - so 1 ninja movement would be coded as delta * ninja_movement. It accounts for different speeds between frames and browsers. But it also means that other things should be recalibrated, ie multiplied by 60
-  lastRender = elapsedTime
+  lastRender = elapsedTime;
 
   if (!gameover) {
     drawJim();
@@ -159,18 +165,20 @@ function drawGameOverScreen() {
 
 function replay(e) {
   if (
-    e.offsetX >= gameoverXOffset &&
-    e.offsetX <= canvasSize - gameoverXOffset &&
-    e.offsetY >= gameoverYOffset &&
-    e.offsetY <= canvasSize - gameoverYOffset
+    (e.offsetX >= gameoverXOffset &&
+      e.offsetX <= canvasSize - gameoverXOffset &&
+      e.offsetY >= gameoverYOffset &&
+      e.offsetY <= canvasSize - gameoverYOffset) ||
+    e.key.toLowerCase() === "r"
   ) {
-    startGame();
-    window.removeEventListener("keyup", replay);
-    canvas.removeEventListener("click", replay);
-  } else if (e.key.toLowerCase() === "r") {
-    // maybe these should be a disjunction... Would make code dryer but LHS of disjunction is already a long conjunction... check out the ctx.isPointInPath method....
     startGame();
     window.removeEventListener("keyup", replay);
     canvas.removeEventListener("click", replay);
   }
 }
+
+/*
+TODO: put variables in their own file?
+TODO: play gunshot sound once - play() returns a promise - and then() call requestAnimationFrame(draw). Alternately play() each sound and Promise.all() them.
+TODO: buildings into background. Get it done. 
+*/
