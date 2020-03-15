@@ -88,8 +88,7 @@ function drawEnemies(delta) {
 
 function renderNinja(ninja, direction) {
   let moment = new Image();
-  let slice = Math.floor(ninja.runcyclePosition) % 8;
-  // alt: let slice = (ninja.runCyclePosition % 8).toFixed(0)
+  let slice = Math.round(ninja.runcyclePosition) % 8;
   moment.src = `./Ninjas/black versions/Ninja-${slice}-${direction}.png`;
   ctx.drawImage(moment, ninja.x, ninja.y, ninjaSize, ninjaSize);
   ninja.runcyclePosition += ninjaAnimationSpeedReduction;
